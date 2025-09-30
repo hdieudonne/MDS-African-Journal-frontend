@@ -5,40 +5,21 @@ import { Mail, Globe, GraduationCap, Award } from "lucide-react";
 
 const EditorialBoard = () => {
   const editorInChief = {
-    name: "Prof. Dr. Margaret Thompson",
-    title: "Editor-in-Chief",
-    affiliation: "Stanford University, Department of Advanced Sciences",
-    expertise: ["Interdisciplinary Research", "Science Policy", "Academic Leadership"],
-    bio: "Professor Thompson brings over 25 years of experience in leading scientific research and academic publishing. She has published 150+ peer-reviewed articles and serves on multiple editorial boards.",
+    title: "Donald Masimbi (MSc Econ)",
+    bio: "Donald Masimbi is an economist, researcher, and lecturer at Kibogora Polytechnic, Rwanda. He is also the Managing Director of MDS Consultancy. As Managing Editor of MDS-JAED, he oversees the journal’s operations, peer review process, and author engagement. His goal is to promote applied, data-driven research that supports inclusive development in Africa.",
     email: "editor.chief@researchjournal.com",
     website: "https://stanford.edu/~mthompson"
   };
 
   const associateEditors = [
     {
-      name: "Dr. James Chen",
-      title: "Associate Editor - Computer Science",
-      affiliation: "MIT, Computer Science and Artificial Intelligence Laboratory",
-      expertise: ["Machine Learning", "Quantum Computing", "AI Ethics"],
-      bio: "Leading researcher in quantum-classical machine learning interfaces with 80+ publications in top-tier venues.",
+      name: "Chief Editor",
+      title: "Dr. Justin RUTIKANGA (PhD)",
+      expertise: ["Statistics"],
+      bio: "Dr. Justin RUTIKANGA is a respected scholar with expertise in Statistics. He holds a PhD and has published widely on African economic transformation and financial inclusion. Currently serving as a senior academic, he leads the editorial vision of MDS-JAED, focusing on high-impact, policy-relevant research rooted in the African context.",
       email: "j.chen@researchjournal.com"
     },
-    {
-      name: "Prof. Elena Rodriguez",
-      title: "Associate Editor - Environmental Sciences",
-      affiliation: "University of Cambridge, Department of Earth Sciences",
-      expertise: ["Climate Modeling", "Ecosystem Dynamics", "Sustainability"],
-      bio: "Internationally recognized expert in climate change research and environmental policy development.",
-      email: "e.rodriguez@researchjournal.com"
-    },
-    {
-      name: "Dr. Rajesh Patel",
-      title: "Associate Editor - Medical Research",
-      affiliation: "Harvard Medical School, Department of Biomedical Informatics",
-      expertise: ["Medical AI", "Precision Medicine", "Digital Health"],
-      bio: "Pioneer in medical AI applications with focus on translating research into clinical practice.",
-      email: "r.patel@researchjournal.com"
-    }
+   
   ];
 
   const editorialBoard = [
@@ -87,47 +68,32 @@ const EditorialBoard = () => {
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">Editorial Board</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Our distinguished editorial board comprises leading experts from prestigious institutions worldwide, 
-            ensuring the highest standards of peer review and scientific excellence.
+           Our Editorial Board brings together scholars and practitioners who share a commitment to rigorous, policy-oriented research that advances inclusive and sustainable development across Africa and beyond.
           </p>
         </div>
 
         {/* Editor-in-Chief */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold font-heading text-center mb-8">Editor-in-Chief</h2>
-          <Card className="max-w-4xl mx-auto shadow-strong">
+          <h2 className="text-3xl font-bold font-heading text-center mb-8">Managing Editor</h2>
+          <Card className="max-w-4xl  shadow-strong">
             <CardHeader className="text-center">
-              <div className="w-24 h-24 bg-gradient-hero rounded-full mx-auto mb-4 flex items-center justify-center">
-                <GraduationCap className="h-12 w-12 text-primary-foreground" />
+              <div className="w-32 h-32 bg-gradient-hero rounded-full mx-auto mb-4 flex items-center justify-center">
+                <img src="managing.webp" alt="" className="rounded-full" />
               </div>
-              <CardTitle className="text-2xl font-heading">{editorInChief.name}</CardTitle>
+             
               <Badge variant="default" className="w-fit mx-auto">{editorInChief.title}</Badge>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
                 <div>
-                  <h4 className="font-semibold mb-2">Affiliation</h4>
-                  <p className="text-muted-foreground mb-4">{editorInChief.affiliation}</p>
                   
-                  <h4 className="font-semibold mb-2">Areas of Expertise</h4>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {editorInChief.expertise.map((area, index) => (
-                      <Badge key={index} variant="outline">{area}</Badge>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Biography</h4>
                   <p className="text-muted-foreground mb-4">{editorInChief.bio}</p>
                   
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm">
                       <Mail className="mr-2 h-4 w-4" />
                       Contact
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Globe className="mr-2 h-4 w-4" />
-                      Profile
                     </Button>
                   </div>
                 </div>
@@ -138,13 +104,13 @@ const EditorialBoard = () => {
 
         {/* Associate Editors */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold font-heading text-center mb-8">Associate Editors</h2>
+          <h2 className="text-3xl font-bold font-heading text-center mb-8">Editors</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {associateEditors.map((editor, index) => (
               <Card key={index} className="shadow-medium hover:shadow-strong transition-smooth">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full mx-auto mb-3 flex items-center justify-center">
-                    <Award className="h-8 w-8 text-primary" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-full mx-auto mb-3 flex items-center justify-center">
+                    <img src="editor.webp" alt="" className="rounded-full" />
                   </div>
                   <CardTitle className="text-lg font-heading">{editor.name}</CardTitle>
                   <Badge variant="secondary" className="w-fit mx-auto text-xs">
@@ -152,7 +118,7 @@ const EditorialBoard = () => {
                   </Badge>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">{editor.affiliation}</p>
+              
                   
                   <div className="mb-3">
                     <div className="flex flex-wrap gap-1 mb-2">
@@ -175,7 +141,7 @@ const EditorialBoard = () => {
         </section>
 
         {/* Editorial Board Members */}
-        <section>
+        {/* <section>
           <h2 className="text-3xl font-bold font-heading text-center mb-8">Editorial Board Members</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {editorialBoard.map((member, index) => (
@@ -198,10 +164,10 @@ const EditorialBoard = () => {
               </Card>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* Call to Action */}
-        <section className="mt-16 text-center bg-gradient-card rounded-lg p-8">
+        {/* <section className="mt-16 text-center bg-gradient-card rounded-lg p-8">
           <h2 className="text-3xl font-bold font-heading mb-4">Join Our Review Network</h2>
           <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
             Become part of our distinguished community of peer reviewers and contribute 
@@ -210,7 +176,7 @@ const EditorialBoard = () => {
           <Button size="lg" className="font-semibold">
             Apply to be a Reviewer
           </Button>
-        </section>
+        </section> */}
       </div>
     </div>
   );

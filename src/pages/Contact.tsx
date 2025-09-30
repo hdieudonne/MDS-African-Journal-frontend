@@ -261,18 +261,6 @@ const Contact = () => {
             </Card>
           </div>
         </section>
-
-        {/* Response Time Notice */}
-        <Card className="mt-8 bg-accent/10 border-accent shadow-medium">
-          <CardContent className="p-6 text-center">
-            <Clock className="h-8 w-8 text-accent mx-auto mb-3" />
-            <h3 className="font-semibold mb-2">Response Time</h3>
-            <p className="text-muted-foreground">
-              We typically respond to inquiries within 24-48 hours during business days. 
-              For urgent matters, please call our editorial office directly.
-            </p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
