@@ -27,14 +27,6 @@ const Contact = () => {
       ]
     },
     {
-      icon: Phone,
-      title: "Phone & Fax",
-      details: [
-        "Tel: +1 (555) 123-4567",
-        "Fax: +1 (555) 123-4568"
-      ]
-    },
-    {
       icon: MapPin,
       title: "Mailing Address",
       details: [
@@ -63,29 +55,6 @@ const Contact = () => {
     "Subscription & Access",
     "Copyright & Permissions",
     "Other"
-  ];
-
-  const departments = [
-    {
-      name: "Editorial Department",
-      email: "editorial@researchjournal.com",
-      description: "Manuscript submissions, review process, and editorial decisions"
-    },
-    {
-      name: "Technical Support",
-      email: "support@researchjournal.com", 
-      description: "Website issues, submission system problems, and technical assistance"
-    },
-    {
-      name: "Subscriptions",
-      email: "subscriptions@researchjournal.com",
-      description: "Journal subscriptions, access issues, and institutional licensing"
-    },
-    {
-      name: "Marketing & Partnerships",
-      email: "partnerships@researchjournal.com",
-      description: "Advertising, partnerships, and promotional opportunities"
-    }
   ];
 
   const faqs = [
@@ -212,33 +181,6 @@ const Contact = () => {
             ))}
           </div>
         </div>
-
-        {/* Department Contacts */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold font-heading text-center mb-8">Department Contacts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {departments.map((dept, index) => (
-              <Card key={index} className="shadow-medium hover:shadow-strong transition-smooth">
-                <CardHeader>
-                  <CardTitle className="font-heading flex items-center">
-                    <Users className="mr-3 h-5 w-5 text-primary" />
-                    {dept.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">{dept.description}</p>
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-primary" />
-                    <a href={`mailto:${dept.email}`} className="text-primary hover:text-primary-light transition-fast">
-                      {dept.email}
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
         {/* FAQ Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold font-heading text-center mb-8">Frequently Asked Questions</h2>

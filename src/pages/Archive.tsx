@@ -16,7 +16,6 @@ const Archive = () => {
       year: 2024,
       volumes: [
         {
-          volume: 14,
           issues: [
             {
               issue: 3,
@@ -47,7 +46,6 @@ const Archive = () => {
       year: 2023,
       volumes: [
         {
-          volume: 13,
           issues: [
             {
               issue: 12,
@@ -78,7 +76,6 @@ const Archive = () => {
       year: 2022,
       volumes: [
         {
-          volume: 12,
           issues: [
             {
               issue: 12,
@@ -104,7 +101,6 @@ const Archive = () => {
     {
       title: "Artificial Intelligence in Healthcare",
       year: 2024,
-      volume: 14,
       issue: "Special Issue 1",
       articles: 12,
       editors: "Dr. Patel, Prof. Chen",
@@ -113,7 +109,6 @@ const Archive = () => {
     {
       title: "Climate Change Mitigation Technologies",
       year: 2023,
-      volume: 13,
       issue: "Special Issue 2",
       articles: 15,
       editors: "Prof. Rodriguez, Dr. Wilson",
@@ -122,7 +117,6 @@ const Archive = () => {
     {
       title: "Quantum Technologies and Applications",
       year: 2023,
-      volume: 13,
       issue: "Special Issue 1",
       articles: 10,
       editors: "Dr. Chen, Prof. Tanaka",
@@ -130,8 +124,8 @@ const Archive = () => {
     }
   ];
 
-  const years = ["2024", "2023", "2022", "2021", "2020"];
-  const categories = ["Computer Science", "Environmental Science", "Medical Research", "Physics", "Chemistry"];
+  const years = ["2024", "2023", "2022"];
+  const topics = ["Development Economics and Sustainable Growth", "Applied Microeconomics and Macroeconomics", "Financial Inclusion and Sector Stability", "Public Finance and Fiscal Policy", "Agricultural and Rural Development","Education, Economics, and Labor Markets","Entrepreneurship and Innovation in Africa","Economic Policy Analysis and Evaluation","Environmental and Energy Economics","Quantitative Modeling in Economics","Other"];
 
   const filteredArchive = archiveData.filter(yearData => {
     return selectedYear === "all" || yearData.year.toString() === selectedYear;
@@ -144,7 +138,7 @@ const Archive = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">Journal Archive</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Browse our complete collection of published research spanning over a decade of scientific advancement. 
+            View our complete collection of published research spanning over a decade of scientific advancement. 
             Access all past issues and discover breakthrough research from our archive.
           </p>
         </div>
@@ -180,8 +174,8 @@ const Archive = () => {
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map(category => (
+                  <SelectItem value="all">All topics</SelectItem>
+                  {topics.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
                 </SelectContent>
@@ -202,7 +196,7 @@ const Archive = () => {
             <Card className="text-center shadow-medium">
               <CardContent className="pt-6">
                 <div className="text-3xl font-bold text-primary mb-2">14</div>
-                <div className="text-muted-foreground">Volumes</div>
+                <div className="text-muted-foreground">Subscribers</div>
               </CardContent>
             </Card>
             <Card className="text-center shadow-medium">
@@ -232,7 +226,7 @@ const Archive = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                    <div>Volume {special.volume}, {special.issue} • {special.year}</div>
+                    <div>{special.issue} • {special.year}</div>
                     <div>Guest Editors: {special.editors}</div>
                     <div className="flex items-center justify-between">
                       <span>{special.articles} articles</span>
@@ -243,7 +237,7 @@ const Archive = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button size="sm" variant="default" className="flex-1">
                       <Eye className="mr-2 h-3 w-3" />
                       View
                     </Button>
@@ -260,7 +254,7 @@ const Archive = () => {
 
         {/* Archive by Year */}
         <section>
-          <h2 className="text-3xl font-bold font-heading mb-6">Browse by Year</h2>
+          <h2 className="text-3xl font-bold font-heading mb-6">View by Year</h2>
           <div className="space-y-8">
             {filteredArchive.map((yearData, yearIndex) => (
               <Card key={yearIndex} className="shadow-medium">
@@ -273,7 +267,6 @@ const Archive = () => {
                 <CardContent>
                   {yearData.volumes.map((volume, volumeIndex) => (
                     <div key={volumeIndex} className="mb-6">
-                      <h3 className="text-xl font-semibold mb-4">Volume {volume.volume}</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {volume.issues.map((issue, issueIndex) => (
                           <Card key={issueIndex} className="shadow-soft hover:shadow-medium transition-smooth">
@@ -295,9 +288,9 @@ const Archive = () => {
                                 </div>
                               </div>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline" className="flex-1">
+                                <Button size="sm" variant="default" className="flex-1">
                                   <BookOpen className="mr-2 h-3 w-3" />
-                                  Browse
+                                  View More
                                 </Button>
                                 <Button size="sm" variant="outline">
                                   <Download className="h-3 w-3" />
@@ -325,10 +318,7 @@ const Archive = () => {
             <Button size="lg" className="font-semibold">
               Subscribe to Alerts
             </Button>
-            <Button variant="outline" size="lg">
-              RSS Feed
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+
           </div>
         </section>
       </div>

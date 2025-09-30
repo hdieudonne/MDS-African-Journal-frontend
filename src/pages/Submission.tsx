@@ -14,7 +14,6 @@ const Submission = () => {
   const [formData, setFormData] = useState({
     title: "",
     category: "",
-    keywords: "",
     abstract: "",
     authors: [{ name: "", email: "", affiliation: "" }],
     ethics: false,
@@ -30,26 +29,23 @@ const Submission = () => {
   ];
 
   const categories = [
-    "Computer Science",
-    "Environmental Science",
-    "Medical Research", 
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "Engineering",
-    "Mathematics"
+    "Applied Microeconomics and Macroeconomics",
+    "Financial Inclusion and Sector Stability",
+    "Development Economics and Sustainable Growth", 
+    "Public Finance and Fiscal Policy",
+    "Agricultural and Rural Development",
+    "Education, Economics, and Labor Markets",
+    "Entrepreneurship and Innovation in Africa",
+    "Economic Policy Analysis and Evaluation",
+    "Environmental and Energy Economics",
+    "Quantitative Modeling in Economics",
+    "Other"
   ];
 
   const requirements = [
     {
       title: "Manuscript File",
       description: "Main manuscript in .docx or .pdf format",
-      required: true,
-      status: "pending"
-    },
-    {
-      title: "Figures & Tables",
-      description: "High-resolution figures (300+ DPI) and tables",
       required: true,
       status: "pending"
     },
@@ -65,12 +61,6 @@ const Submission = () => {
       required: false,
       status: "optional"
     },
-    {
-      title: "Supplementary Materials",
-      description: "Additional data, code, or supplementary files",
-      required: false,
-      status: "optional"
-    }
   ];
 
   const addAuthor = () => {
@@ -169,18 +159,6 @@ const Submission = () => {
                       </SelectContent>
                     </Select>
                   </div>
-
-                  <div>
-                    <Label htmlFor="keywords">Keywords *</Label>
-                    <Input
-                      id="keywords"
-                      placeholder="Enter 4-6 keywords separated by commas"
-                      value={formData.keywords}
-                      onChange={(e) => setFormData({...formData, keywords: e.target.value})}
-                      className="mt-1"
-                    />
-                  </div>
-
                   <div>
                     <Label htmlFor="abstract">Abstract *</Label>
                     <Textarea

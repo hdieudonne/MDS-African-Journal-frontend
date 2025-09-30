@@ -57,29 +57,66 @@ const AuthorPage = () => {
 
   const articleTypes = [
     {
-      type: "Original Research",
-      description: "Novel research findings with significant contributions to the field",
-      wordLimit: "6,000-8,000",
-      timeframe: "8-12 weeks"
+      type: "Plagiarism Policy",
+      description: "MDS-JAED enforces a strict plagiarism threshold of 15%. All manuscripts will be screened using Turnitin or equivalent software. Manuscripts with high similarity scores will be automatically rejected or returned for revision.",
+      items: []
+    },
+     {
+      type: "Author Fees",
+      description: "Currently, there are no submission or publication fees.This policy may be revised in the future to cover editorial and hosting costs.",
+      items: [
+      ]
     },
     {
-      type: "Review Articles",
-      description: "Comprehensive reviews of current knowledge in specific areas",
-      wordLimit: "8,000-12,000",
-      timeframe: "10-14 weeks"
+      type: "Types of Submissions",
+      description: "",
+      items: [
+        "Original Research Article 4,000–8,000 words Full-length analytical papers",
+        "Policy Brief 2,000–4,000 words: Short, actionable findings for decision-makers ",
+        "Field/Case Reports 3,000–6,000 wordsField research, project evaluations",
+        "Book Reviews 1,000–2,500 words: Reviews of recent academic publications"
+      ],
+      description2:"Accepted articles may be published online ahead of print."
+    },
+      {
+      type: "Publication Schedule",
+      description: "MDS-JAED is published biannually:",
+      items: [
+        "Volume 1, Issue 1: July–December",
+        "Volume 1, Issue 2: January–June",
+      ]
     },
     {
-      type: "Short Communications",
-      description: "Brief reports of preliminary or novel findings",
-      wordLimit: "2,000-3,000",
-      timeframe: "6-8 weeks"
+      type: "Acceptable Topics",
+      description: "We accept manuscripts in areas including (but not limited to):",
+      items: [
+        "Development Economics and Sustainable Growth",
+        "Applied Microeconomics and Macroeconomics",
+        "Financial Inclusion and Sector Stability",
+        "Public Finance and Fiscal Policy",
+        "Agricultural and Rural Development",
+        "Education, Economics, and Labor Markets",
+        "Entrepreneurship and Innovation in Africa",
+        "Economic Policy Analysis and Evaluation",
+        "Environmental and Energy Economics",
+        "Quantitative Modeling in Economics"
+      ]
     },
     {
-      type: "Case Studies",
-      description: "Detailed analysis of specific cases or phenomena",
-      wordLimit: "3,000-5,000",
-      timeframe: "8-10 weeks"
-    }
+      type: "Formatting Guidelines",
+      description: "Comprehensive Formatting Guidelines",
+     items: [
+        "Language: English (British or American, but consistent throughout)",
+        "Citation Style: APA 7th Edition",
+        "File Format: Submit both Word (.docx) and PDF (.pdf)",
+        "Font: Times New Roman, 12 pt, 1.5 spacing",
+        "Margins: Normal (1 inch)",
+        "Page Numbers: Bottom right",
+        "Tables and Figures: Embedded in the text with proper labels and sources"
+
+      ]
+    },
+   
   ];
 
   const guidelines = [
@@ -94,7 +131,7 @@ const AuthorPage = () => {
       ]
     },
     {
-      category: "Technical Requirements", 
+      category: "Requirements documents", 
       items: [
         "Double-spaced text with 12pt Times New Roman font",
         "Line numbers and page numbers included",
@@ -139,7 +176,7 @@ const AuthorPage = () => {
           <TabsContent value="guidelines" className="space-y-8">
             {/* Article Types */}
             <section>
-              <h2 className="text-3xl font-bold font-heading mb-6">Article Types</h2>
+              <h2 className="text-3xl font-bold font-heading mb-6">Detailed Guidelines</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {articleTypes.map((type, index) => (
                   <Card key={index} className="shadow-medium">
@@ -148,16 +185,14 @@ const AuthorPage = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground mb-4">{type.description}</p>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Target className="h-4 w-4 text-primary" />
-                          <span className="text-sm">Word limit: {type.wordLimit}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-primary" />
-                          <span className="text-sm">Review time: {type.timeframe}</span>
-                        </div>
-                      </div>
+                      <ul className="space-y-2">
+                        {type.items.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                            <span className="text-muted-foreground">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </CardContent>
                   </Card>
                 ))}
@@ -166,7 +201,7 @@ const AuthorPage = () => {
 
             {/* Detailed Guidelines */}
             <section>
-              <h2 className="text-3xl font-bold font-heading mb-6">Detailed Guidelines</h2>
+              <h2 className="text-3xl font-bold font-heading mb-6">Other Guidelines</h2>
               <div className="space-y-6">
                 {guidelines.map((section, index) => (
                   <Card key={index} className="shadow-medium">
