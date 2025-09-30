@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Menu, X, Mail, Phone, Search } from "lucide-react";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,46 +23,56 @@ const Navigation = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-soft">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+      {/* 🔹 Top Contact Bar */}
+      <div className="bg-primary text-primary-foreground text-xs md:text-sm">
+        <div className="container mx-auto flex items-center justify-between px-4 py-1">
+          <div className="flex items-center space-x-4">
+            <a href="tel:+250123456789" className="flex items-center space-x-1 hover:underline">
+              <Phone className="h-3 w-3" />
+              <span>+250 123 456 789</span>
+            </a>
+            <a href="mailto:info@majaed.org" className="flex items-center space-x-1 hover:underline">
+              <Mail className="h-3 w-3" />
+              <span>info@majaed.org</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* 🔹 Middle Bar (Logo + Search + Login) */}
+      <div className="container mx-auto px-4 py-3 border-b border-border">
+        <div className="flex items-center justify-between">
+          {/* Logo + Title */}
           <Link to="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
-            <BookOpen className="h-6 w-6" />
-            <span className="font-heading">Research Journal</span>
+            <div className="h-12 w-12">
+              <img src="/logo.png" alt="Logo" className="rounded-full object-cover" />
+            </div>
+            <span className="font-heading text-base">
+              MDS African Journal of Applied Economics and Development (MAJAED)
+            </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-smooth ${
-                  isActive(item.path)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-secondary hover:text-secondary-foreground"
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+          {/* Search + Login */}
+          <div className="hidden md:flex items-center space-x-3">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                className="pl-8 w-48 md:w-64"
+              />
+            </div>
+            <Button variant="default">Login</Button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-2">
+      {/* 🔹 Bottom Nav (Nav Items) */}
+      <div className="bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-12">
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center space-x-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -71,14 +82,51 @@ const Navigation = () => {
                       ? "bg-primary text-primary-foreground"
                       : "text-foreground hover:bg-secondary hover:text-secondary-foreground"
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
           </div>
-        )}
+
+          {/* Mobile Nav Dropdown */}
+          {isMenuOpen && (
+            <div className="lg:hidden py-4 border-t border-border">
+              <div className="flex flex-col space-y-2">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-smooth ${
+                      isActive(item.path)
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-secondary hover:text-secondary-foreground"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+
+                {/* Mobile Search + Login */}
+                <div className="mt-4 space-y-2">
+                  <Input type="text" placeholder="Search..." />
+                  <Button className="w-full">Login</Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );

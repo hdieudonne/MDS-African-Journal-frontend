@@ -84,10 +84,8 @@ const Journal = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">Current Issue</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Volume 14, Issue 3 • March 2024 • Peer-reviewed research articles advancing scientific knowledge
-          </p>
+          <h1 className="text-4xl md:text-3xl font-bold font-heading mb-6">Current Topics</h1>
+          
         </div>
 
         {/* Search and Filter */}
@@ -109,7 +107,7 @@ const Journal = () => {
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="all">All Topics</SelectItem>
                   {categories.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
@@ -170,7 +168,7 @@ const Journal = () => {
                   ))}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Button variant="default" size="sm">
+                  <Button variant="outline" size="sm">
                     <Eye className="mr-2 h-4 w-4" />
                     Read Article
                   </Button>
@@ -178,9 +176,9 @@ const Journal = () => {
                     <Download className="mr-2 h-4 w-4" />
                     Download PDF
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  {/* <Button variant="ghost" size="sm">
                     View Citations
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>

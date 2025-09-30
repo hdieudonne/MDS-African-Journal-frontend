@@ -2,6 +2,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, Award, Globe, ArrowRight, Download } from "lucide-react";
+import Slider from "react-slick";
+
+// Import slick-carousel CSS
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Home = () => {
   const featuredArticles = [
@@ -28,28 +33,62 @@ const Home = () => {
   const stats = [
     { icon: BookOpen, label: "Published Articles", value: "2,847" },
     { icon: Users, label: "Active Researchers", value: "1,250" },
-    { icon: Award, label: "Citations", value: "15,420" },
     { icon: Globe, label: "Countries", value: "68" },
+  ];
+
+  // Hero carousel settings
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    speed: 800,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    fade: true,
+  };
+
+  const heroImages = [
+    "bg3.jpeg",
+    "bg1.jpg",
+    "bg2.jpg",
   ];
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-gradient-hero text-primary-foreground py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold font-heading mb-6">
-            Advancing Scientific Knowledge
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90 max-w-3xl mx-auto">
-            A premier international journal publishing cutting-edge research across multiple disciplines, 
-            fostering innovation and scholarly excellence.
+      {/* Hero Section with Carousel */}
+      <section className="relative h-[80vh] w-full">
+        <Slider {...sliderSettings} className="h-full">
+          {heroImages.map((src, i) => (
+            <div key={i} className="h-[80vh] w-full">
+              <img
+                src={src}
+                alt={`Slide ${i + 1}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ))}
+        </Slider>
+
+        {/* Overlay text/buttons */}
+        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center px-4">
+          <p className="text-2xl md:text-2xl font-bold font-heading text-white mb-6 max-w-7xl">
+            Bridging research and practical applications in economics, entrepreneurship, and development with a focus on African contexts.
+          </p>
+          <p className="text-xl md:text-4xl mb-8 text-gray-200 max-w-3xl mx-auto">
+            Welcome to the MDS AJournal of Applied Economics and Development
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="font-semibold">
+            {/* <Button size="lg" variant="secondary" className="font-semibold">
               <BookOpen className="mr-2 h-5 w-5" />
               Browse Current Issue
-            </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+            </Button> */}
+            <Button
+              size="lg"
+              variant="ghost"
+              className=""
+            >
               Submit Your Research
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -60,9 +99,9 @@ const Home = () => {
       {/* Stats Section */}
       <section className="py-16 bg-secondary">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
+              <div key={index} className="text-center ">
                 <div className="flex justify-center mb-4">
                   <stat.icon className="h-8 w-8 text-primary" />
                 </div>
@@ -78,7 +117,7 @@ const Home = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">Featured Research</h2>
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">Latest Research</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Discover the latest breakthrough research and scholarly contributions from leading experts worldwide.
             </p>
@@ -88,14 +127,14 @@ const Home = () => {
             {featuredArticles.map((article, index) => (
               <Card key={index} className="shadow-medium hover:shadow-strong transition-smooth">
                 <CardHeader>
-                  <div className="text-sm text-accent font-medium mb-2">{article.category}</div>
+                  <div className="text-sm text-primary font-bold mb-2">{article.category}</div>
                   <CardTitle className="font-heading">{article.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">{article.authors}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">{article.date}</span>
-                    <Button variant="ghost" size="sm">
+                    <Button  size="sm">
                       <Download className="mr-2 h-4 w-4" />
                       Read More
                     </Button>
@@ -107,7 +146,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link to="/journal">
-              <Button variant="outline" size="lg">
+              <Button  size="lg">
                 View All Articles
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
