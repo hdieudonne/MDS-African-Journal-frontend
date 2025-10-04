@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, LogOut, FileText, Users, Home, Settings, BookOpen, Award, X } from 'lucide-react';
+import { Menu, LogOut, FileText, Users, Home, Settings, BookOpen, Award, X, Book } from 'lucide-react';
 
 interface Submission {
   id: number;
@@ -26,9 +26,10 @@ const Sidebar: React.FC<{ active: string; onSelect: (menu: string) => void; isOp
     { name: 'Dashboard', icon: <Home size={18} /> },
     { name: 'Submissions', icon: <FileText size={18} /> },
     { name: 'Users', icon: <Users size={18} /> },
+    { name: 'Articles', icon: <Book size={18} /> },
     { name: 'Editorial Board', icon: <Award size={18} /> },
     { name: 'Archive', icon: <BookOpen size={18} /> },
-  
+   
   ];
 
   return (
@@ -132,6 +133,37 @@ const Dashboard: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-md p-6">
             <h3 className="text-lg font-semibold mb-4">User Management</h3>
             <p className="text-gray-500">Coming soon...</p>
+          </div>
+        )}
+
+        {activeMenu === 'Articles' && (
+          <div className="bg-white rounded-2xl shadow-md p-6">
+            <h3 className="text-lg font-semibold mb-4">Article Management</h3>
+            <p className="text-gray-500 mb-4">Admins can add, view, and manage articles here.</p>
+            <button className="bg-blue-700 text-white px-4 py-2 rounded-lg mb-4 hover:bg-blue-800 transition-all">Add New Article</button>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-gray-100 text-left">
+                    <th className="p-3">Title</th>
+                    <th className="p-3">Category</th>
+                    <th className="p-3">Published Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-800">Artificial Intelligence in Healthcare</td>
+                    <td className="p-3">AI & Healthcare</td>
+                    <td className="p-3 text-gray-500">2024-01-12</td>
+                  </tr>
+                  <tr className="border-b hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-800">Climate Change & Agriculture</td>
+                    <td className="p-3">Environmental Economics</td>
+                    <td className="p-3 text-gray-500">2024-02-05</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
