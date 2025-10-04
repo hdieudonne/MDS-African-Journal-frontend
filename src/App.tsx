@@ -30,7 +30,7 @@ const AppContent = () => {
 
       <main className="flex-1">
         <Routes>
-          <Route path="/dashboard/*" element={<Dashboard/>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/journal" element={<Journal />} />
