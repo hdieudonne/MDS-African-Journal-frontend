@@ -14,7 +14,7 @@ import Archive from "./pages/Archive";
 import Submission from "./pages/Submission";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import MDSJournalDashboard from "./pages/admin/Dashboard";
+import Dashboard from "./pages/admin/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +30,7 @@ const AppContent = () => {
 
       <main className="flex-1">
         <Routes>
-          <Route path="/dashboard/*" element={<MDSJournalDashboard />} />
+          <Route path="/dashboard/*" element={<Dashboard/>} />
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/journal" element={<Journal />} />
