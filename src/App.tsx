@@ -14,7 +14,14 @@ import Archive from "./pages/Archive";
 import Submission from "./pages/Submission";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import Dashboard from "./pages/Dashboard";
+
+import DashboardLayout from "./pages/admin/DashboardLayout";
+import DashboardHome from "./pages/admin/DashboardHome";
+import SubmissionsPage from "./pages/admin/SubmissionsPage";
+import UsersPage from "./pages/admin/UsersPage";
+import ArticlesPage from "./pages/admin/ArticlesPage";
+import EditorialBoardPage from "./pages/admin/EditorialBoardPage";
+import ArchivePage from "./pages/admin/ArchivePage";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +37,16 @@ const AppContent = () => {
 
       <main className="flex-1">
         <Routes>
-          <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/dashboard" element={<DashboardLayout/>}>
+        <Route index element={<DashboardHome/>}   />
+        <Route path="Submissions" element={<SubmissionsPage/>}  />
+        <Route  path="users"  element={<UsersPage/>}  />
+        <Route  path="articles"  element={<ArticlesPage/>}  />
+        <Route path="editorial-board" element={<EditorialBoardPage/>} />
+        <Route  path="archive" element={<ArchivePage/>} />
+        
+        </Route>
+          
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/journal" element={<Journal />} />
@@ -39,6 +55,7 @@ const AppContent = () => {
           <Route path="/archive" element={<Archive />} />
           <Route path="/submission" element={<Submission />} />
           <Route path="/contact" element={<Contact />} />
+
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
