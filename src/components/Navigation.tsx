@@ -62,7 +62,9 @@ const Navigation = () => {
                 className="pl-8 w-48 md:w-64"
               />
             </div>
-            <Button variant="default">Login</Button>
+             <Link to="/login">
+             <Button variant="default">Login</Button>
+             </Link>
           </div>
         </div>
       </div>
@@ -121,7 +123,9 @@ const Navigation = () => {
                 {/* Mobile Search + Login */}
                 <div className="mt-4 space-y-2">
                   <Input type="text" placeholder="Search..." />
+                   <Link to="/login">
                   <Button className="w-full">Login</Button>
+                  </Link>
                 </div>
               </div>
             </div>

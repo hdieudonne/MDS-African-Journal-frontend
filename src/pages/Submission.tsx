@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,31 +8,44 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, CheckCircle, AlertCircle, Clock, Users, Send } from "lucide-react";
+import { Upload, FileText, CheckCircle, Users, Send } from "lucide-react";
 
 const Submission = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate(); 
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    title: "",
+    manuscriptTitle: "",
     category: "",
     abstract: "",
-    authors: [{ name: "", email: "", affiliation: "" }],
+    keywords: "",
+    authors: [{ fullName: "", email: "", affiliation: "" }],
+    files: [] as any[],
     ethics: false,
     conflicts: false,
-    copyright: false
+    copyright: false,
   });
+
+    useEffect(() => {
+    const token = localStorage.getItem("access_token") 
+    if (!token) {
+      alert("You must login first!");
+      navigate("/login"); // redirect to login page
+    }
+  }, []);
 
   const steps = [
     { number: 1, title: "Manuscript Details", icon: FileText },
     { number: 2, title: "Authors", icon: Users },
     { number: 3, title: "Upload Files", icon: Upload },
-    { number: 4, title: "Review & Submit", icon: CheckCircle }
+    { number: 4, title: "Review & Submit", icon: CheckCircle },
   ];
 
   const categories = [
     "Applied Microeconomics and Macroeconomics",
     "Financial Inclusion and Sector Stability",
-    "Development Economics and Sustainable Growth", 
+    "Development Economics and Sustainable Growth",
     "Public Finance and Fiscal Policy",
     "Agricultural and Rural Development",
     "Education, Economics, and Labor Markets",
@@ -43,46 +57,173 @@ const Submission = () => {
   ];
 
   const requirements = [
-    {
-      title: "Manuscript File",
-      description: "Main manuscript in .docx or .pdf format",
-      required: true,
-      status: "pending"
-    },
-    {
-      title: "Cover Letter",
-      description: "Brief description of significance and novelty",
-      required: true,
-      status: "pending"
-    },
-    {
-      title: "Ethics Documentation",
-      description: "Ethics approval for human/animal studies",
-      required: false,
-      status: "optional"
-    },
+    { title: "Manuscript File", description: "Main manuscript in .docx or .pdf format", required: true },
+    { title: "Cover Letter", description: "Brief description of significance and novelty", required: true },
+    { title: "Ethics Documentation", description: "Ethics approval for human/animal studies", required: false },
   ];
 
-  const addAuthor = () => {
+  // Author handlers
+  const addAuthor = () =>
     setFormData({
       ...formData,
-      authors: [...formData.authors, { name: "", email: "", affiliation: "" }]
+      authors: [...formData.authors, { fullName: "", email: "", affiliation: "" }]
     });
-  };
 
   const updateAuthor = (index: number, field: string, value: string) => {
-    const updatedAuthors = formData.authors.map((author, i) => 
+    const updatedAuthors = formData.authors.map((author, i) =>
       i === index ? { ...author, [field]: value } : author
     );
     setFormData({ ...formData, authors: updatedAuthors });
   };
 
-  const nextStep = () => {
-    if (currentStep < 4) setCurrentStep(currentStep + 1);
+  // File upload handler
+const handleFileUpload = async (
+  event: React.ChangeEvent<HTMLInputElement>,
+  requirement: string
+) => {
+  if (!event.target.files || event.target.files.length === 0) return;
+
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    alert("You must login first!");
+    navigate("/login");
+    return;
+  }
+
+  const filesArray = Array.from(event.target.files);
+  const data = new FormData();
+
+  filesArray.forEach((file) => {
+    data.append("files", file); // note plural "files" for multiple files
+  });
+
+  try {
+    const res = await fetch(`${API_URL}/submission/upload-multiple`, {
+      method: "POST",
+      body: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const contentType = res.headers.get("content-type");
+    let result: any = {};
+    if (contentType && contentType.includes("application/json")) {
+      result = await res.json();
+    } else {
+      const text = await res.text();
+      console.error("Server returned non-JSON response:", text);
+      alert("File upload failed: server returned unexpected response");
+      return;
+    }
+
+    if (res.ok) {
+      // Add all uploaded files to formData.files
+      const uploadedFiles = result.files.map((file: any) => ({
+        ...file,
+        requirement,
+      }));
+
+      setFormData((prev) => ({
+        ...prev,
+        files: [...prev.files, ...uploadedFiles],
+      }));
+    } else {
+      alert(result.message || "File upload failed");
+    }
+  } catch (err) {
+    console.error("Upload error:", err);
+    alert("Error uploading file");
+  }
+};
+
+
+
+
+  const nextStep = () => currentStep < 4 && setCurrentStep(currentStep + 1);
+  const prevStep = () => currentStep > 1 && setCurrentStep(currentStep - 1);
+
+  // Submission
+const handleSubmit = async () => {
+const payload = {
+  manuscriptTitle: formData.manuscriptTitle,
+  category: formData.category,
+  abstract: formData.abstract,
+  keywords: formData.keywords,
+  authors: formData.authors.map((a, i) => ({
+    fullName: a.fullName,
+    email: a.email,
+    affiliation: a.affiliation,
+    isCorresponding: i === 0,
+    order: i + 1,
+  })),
+  files: formData.files.map((f) => ({
+    fileName: f.fileName || f.original_filename || f.name,
+    fileUrl: f.fileUrl || f.secure_url,
+    mimeType: f.mimeType || f.type || "application/pdf",
+    fileSize: f.fileSize || f.bytes || 1000,
+    fileType:
+      f.requirement === "Manuscript File"
+        ? "MANUSCRIPT"
+        : f.requirement === "Cover Letter"
+        ? "COVER_LETTER"
+        : "ETHICS_DOCUMENTATION",
+  })),
+  declarations: [
+    {
+      type: "ETHICAL_CONDUCT",
+      isChecked: formData.ethics,
+      text: "Ethics approval confirmation",
+    },
+    {
+      type: "CONFLICT_OF_INTEREST",
+      isChecked: formData.conflicts,
+      text: "Conflict of interest disclosure",
+    },
+    {
+      type: "COPYRIGHT_TRANSFER",
+      isChecked: formData.copyright,
+      text: "Copyright transfer confirmation",
+    },
+  ],
+};
+
+
+    try {
+      const res = await fetch(`${API_URL}/submission`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        alert("Submission successful!");
+        setFormData({
+          manuscriptTitle: "",
+          category: "",
+          abstract: "",
+          keywords: "",
+          authors: [{ fullName: "", email: "", affiliation: "" }],
+          files: [],
+          ethics: false,
+          conflicts: false,
+          copyright: false,
+        });
+        setCurrentStep(1);
+      } else {
+        alert(result.message || "Submission failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting manuscript");
+    }
   };
 
-  const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  const getFileStatus = (reqTitle: string) => {
+    return formData.files.find(f => f.requirement === reqTitle) ? "Uploaded" : "Pending";
   };
 
   return (
@@ -90,307 +231,243 @@ const Submission = () => {
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">Submit Your Research</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Submit Your Research</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Submit your manuscript for peer review through our streamlined submission process. 
-            Follow the steps below to ensure your research reaches the global scientific community.
+            Submit your manuscript for peer review through our streamlined submission process.
           </p>
         </div>
 
-        {/* Progress Steps */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => (
-              <div key={step.number} className="flex items-center">
-                <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-smooth ${
-                  currentStep >= step.number 
-                    ? "bg-primary border-primary text-primary-foreground" 
-                    : "border-border text-muted-foreground"
-                }`}>
-                  {currentStep > step.number ? (
-                    <CheckCircle className="h-6 w-6" />
-                  ) : (
-                    <step.icon className="h-6 w-6" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <div className="text-sm font-medium">{step.title}</div>
-                </div>
-                {index < steps.length - 1 && (
-                  <div className={`h-0.5 w-16 mx-4 transition-smooth ${
-                    currentStep > step.number ? "bg-primary" : "bg-border"
-                  }`} />
-                )}
+        {/* Steps */}
+        <div className="mb-12 flex items-center justify-between">
+          {steps.map((step, index) => (
+            <div key={step.number} className="flex items-center">
+              <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 ${currentStep >= step.number ? "bg-primary border-primary text-primary-foreground" : "border-border text-muted-foreground"}`}>
+                {currentStep > step.number ? <CheckCircle className="h-6 w-6" /> : <step.icon className="h-6 w-6" />}
               </div>
-            ))}
-          </div>
+              <div className="ml-3 text-sm font-medium">{step.title}</div>
+              {index < steps.length - 1 && <div className={`h-0.5 w-16 mx-4 ${currentStep > step.number ? "bg-primary" : "bg-border"}`} />}
+            </div>
+          ))}
         </div>
 
-        {/* Form Content */}
+        {/* Card */}
         <Card className="shadow-strong">
           <CardContent className="p-8">
-            {/* Step 1: Manuscript Details */}
+
+            {/* Step 1 */}
             {currentStep === 1 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold font-heading mb-6">Manuscript Details</h2>
-                
+                <h2 className="text-2xl font-bold mb-6">Manuscript Details</h2>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="title">Article Title *</Label>
-                    <Input
-                      id="title"
-                      placeholder="Enter the full title of your research article"
-                      value={formData.title}
-                      onChange={(e) => setFormData({...formData, title: e.target.value})}
-                      className="mt-1"
-                    />
+                    <Label>Article Title *</Label>
+                    <Input value={formData.manuscriptTitle} onChange={(e) => setFormData({ ...formData, manuscriptTitle: e.target.value })} />
                   </div>
-
                   <div>
-                    <Label htmlFor="category">Research Category *</Label>
+                    <Label>Research Category *</Label>
                     <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select the primary research category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map(category => (
-                          <SelectItem key={category} value={category}>{category}</SelectItem>
-                        ))}
-                      </SelectContent>
+                      <SelectTrigger><SelectValue placeholder="Select Category"/></SelectTrigger>
+                      <SelectContent>{categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="abstract">Abstract *</Label>
-                    <Textarea
-                      id="abstract"
-                      placeholder="Enter your abstract (250-300 words)"
-                      value={formData.abstract}
-                      onChange={(e) => setFormData({...formData, abstract: e.target.value})}
-                      className="mt-1 min-h-32"
-                    />
-                    <div className="text-sm text-muted-foreground mt-1">
-                      {formData.abstract.length}/300 words
-                    </div>
+                    <Label>Keywords *</Label>
+                    <Input value={formData.keywords} onChange={(e) => setFormData({ ...formData, keywords: e.target.value })} placeholder="Enter keywords separated by commas" />
+                  </div>
+                  <div>
+                    <Label>Abstract *</Label>
+                    <Textarea value={formData.abstract} onChange={(e) => setFormData({ ...formData, abstract: e.target.value })} className="min-h-32" />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Authors */}
+            {/* Step 2 */}
             {currentStep === 2 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold font-heading mb-6">Author Information</h2>
-                
-                {formData.authors.map((author, index) => (
-                  <Card key={index} className="shadow-soft">
-                    <CardHeader>
-                      <CardTitle className="text-lg">
-                        Author {index + 1} {index === 0 && <Badge variant="default" className="ml-2">Corresponding</Badge>}
-                      </CardTitle>
-                    </CardHeader>
+                <h2 className="text-2xl font-bold mb-6">Author Information</h2>
+                {formData.authors.map((author, i) => (
+                  <Card key={i} className="shadow-soft">
+                    <CardHeader><CardTitle className="text-lg">Author {i+1} {i===0 && <Badge className="ml-2">Corresponding</Badge>}</CardTitle></CardHeader>
                     <CardContent className="space-y-4">
-                      <div>
-                        <Label>Full Name *</Label>
-                        <Input
-                          placeholder="Enter author's full name"
-                          value={author.name}
-                          onChange={(e) => updateAuthor(index, 'name', e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label>Email Address *</Label>
-                        <Input
-                          type="email"
-                          placeholder="Enter email address"
-                          value={author.email}
-                          onChange={(e) => updateAuthor(index, 'email', e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label>Institutional Affiliation *</Label>
-                        <Input
-                          placeholder="Enter institution and department"
-                          value={author.affiliation}
-                          onChange={(e) => updateAuthor(index, 'affiliation', e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
+                      <Input placeholder="Full Name" value={author.fullName} onChange={(e) => updateAuthor(i, "fullName", e.target.value)} />
+                      <Input placeholder="Email" type="email" value={author.email} onChange={(e) => updateAuthor(i, "email", e.target.value)} />
+                      <Input placeholder="Affiliation" value={author.affiliation} onChange={(e) => updateAuthor(i, "affiliation", e.target.value)} />
                     </CardContent>
                   </Card>
                 ))}
-
-                <Button type="button" variant="outline" onClick={addAuthor} className="w-full">
-                  Add Another Author
-                </Button>
+                <Button onClick={addAuthor} variant="outline" className="w-full">Add Another Author</Button>
               </div>
             )}
 
-            {/* Step 3: File Upload */}
+            {/* Step 3 */}
             {currentStep === 3 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold font-heading mb-6">Upload Files</h2>
-                
-                <div className="space-y-4">
-                  {requirements.map((req, index) => (
-                    <Card key={index} className="shadow-soft">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-medium">{req.title}</h3>
-                              {req.required ? (
-                                <Badge variant="destructive" className="text-xs">Required</Badge>
-                              ) : (
-                                <Badge variant="secondary" className="text-xs">Optional</Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">{req.description}</p>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            {req.status === "pending" && <Clock className="h-5 w-5 text-muted-foreground" />}
-                            {req.status === "uploaded" && <CheckCircle className="h-5 w-5 text-success" />}
-                            <Button variant="outline" size="sm">
-                              <Upload className="mr-2 h-4 w-4" />
-                              Upload
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                <Card className="bg-accent/10 border-accent">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-accent mt-0.5" />
+                <h2 className="text-2xl font-bold mb-6">Upload Files</h2>
+                {requirements.map((req, i) => (
+                  <Card key={i} className="shadow-soft">
+                    <CardContent className="p-4 flex items-center justify-between">
                       <div>
-                        <h4 className="font-medium mb-1">File Requirements</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          <li>• Maximum file size: 50MB per file</li>
-                          <li>• Accepted formats: .docx, .pdf, .png, .jpg, .tiff</li>
-                          <li>• Figures must be minimum 300 DPI resolution</li>
-                          <li>• All files will be scanned for viruses</li>
-                        </ul>
+                        <h3 className="font-medium flex items-center gap-2">
+                          {req.title} 
+                          <Badge variant={getFileStatus(req.title) === "Uploaded" ? "secondary" : "destructive"}>
+                            {getFileStatus(req.title)}
+                          </Badge>
+                        </h3>
+                        <p className="text-sm text-muted-foreground">{req.description}</p>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <Button variant="outline" size="sm" asChild>
+                        <label>
+                          <Upload className="mr-2 h-4 w-4"/> Upload
+                          <input type="file" hidden onChange={(e) => handleFileUpload(e, req.title)} />
+                        </label>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             )}
 
-            {/* Step 4: Review & Submit */}
-            {currentStep === 4 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold font-heading mb-6">Review & Submit</h2>
-                
-                <Card className="shadow-soft">
-                  <CardHeader>
-                    <CardTitle>Submission Summary</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label className="font-medium">Title:</Label>
-                      <p className="text-muted-foreground">{formData.title || "Not provided"}</p>
-                    </div>
-                    <div>
-                      <Label className="font-medium">Category:</Label>
-                      <p className="text-muted-foreground">{formData.category || "Not selected"}</p>
-                    </div>
-                    <div>
-                      <Label className="font-medium">Authors:</Label>
-                      <p className="text-muted-foreground">
-                        {formData.authors.map(author => author.name).filter(name => name).join(", ") || "No authors added"}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+            {/* Step 4 */}
+           {/* Step 4 */}
+  {currentStep === 4 && (
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold mb-6">Review & Submit</h2>
 
-                <Card className="shadow-soft">
-                  <CardHeader>
-                    <CardTitle>Required Declarations</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-start space-x-2">
-                      <Checkbox 
-                        id="ethics" 
-                        checked={formData.ethics}
-                        onCheckedChange={(checked) => setFormData({...formData, ethics: checked as boolean})}
-                      />
-                      <Label htmlFor="ethics" className="text-sm leading-relaxed">
-                        I confirm that this research has been conducted in accordance with ethical standards 
-                        and all necessary approvals have been obtained.
-                      </Label>
-                    </div>
-                    <div className="flex items-start space-x-2">
-                      <Checkbox 
-                        id="conflicts" 
-                        checked={formData.conflicts}
-                        onCheckedChange={(checked) => setFormData({...formData, conflicts: checked as boolean})}
-                      />
-                      <Label htmlFor="conflicts" className="text-sm leading-relaxed">
-                        I have disclosed all potential conflicts of interest related to this research.
-                      </Label>
-                    </div>
-                    <div className="flex items-start space-x-2">
-                      <Checkbox 
-                        id="copyright" 
-                        checked={formData.copyright}
-                        onCheckedChange={(checked) => setFormData({...formData, copyright: checked as boolean})}
-                      />
-                      <Label htmlFor="copyright" className="text-sm leading-relaxed">
-                        I confirm that I have the right to submit this work and transfer copyright 
-                        to the journal upon acceptance.
-                      </Label>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
+    {/* Manuscript Details */}
+    <Card className="shadow-soft">
+      <CardHeader><CardTitle>Manuscript Details</CardTitle></CardHeader>
+      <CardContent className="space-y-2">
+        <p><b>Title:</b> {formData.manuscriptTitle}</p>
+        <p><b>Category:</b> {formData.category}</p>
+        <p><b>Keywords:</b> {formData.keywords}</p>
+        <p><b>Abstract:</b></p>
+        <p className="text-sm text-muted-foreground">{formData.abstract}</p>
+      </CardContent>
+    </Card>
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between pt-8 border-t border-border">
-              <Button 
-                variant="outline" 
-                onClick={prevStep} 
-                disabled={currentStep === 1}
-              >
-                Previous
-              </Button>
-              
-              {currentStep < 4 ? (
-                <Button onClick={nextStep}>
-                  Next Step
-                </Button>
-              ) : (
-                <Button 
-                  className="font-semibold"
-                  disabled={!formData.ethics || !formData.conflicts || !formData.copyright}
-                >
-                  <Send className="mr-2 h-4 w-4" />
-                  Submit Manuscript
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+    {/* Authors Table */}
+    <Card className="shadow-soft">
+      <CardHeader><CardTitle>Authors</CardTitle></CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full border-collapse border border-border">
+            <thead>
+              <tr className="bg-muted-foreground/10">
+                <th className="border border-border px-4 py-2 text-left">#</th>
+                <th className="border border-border px-4 py-2 text-left">Full Name</th>
+                <th className="border border-border px-4 py-2 text-left">Email</th>
+                <th className="border border-border px-4 py-2 text-left">Affiliation</th>
+                <th className="border border-border px-4 py-2 text-left">Corresponding</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.authors.map((a, i) => (
+                <tr key={i} className="hover:bg-muted-foreground/5">
+                  <td className="border border-border px-4 py-2">{i + 1}</td>
+                  <td className="border border-border px-4 py-2">{a.fullName}</td>
+                  <td className="border border-border px-4 py-2">{a.email}</td>
+                  <td className="border border-border px-4 py-2">{a.affiliation}</td>
+                  <td className="border border-border px-4 py-2">{i === 0 ? "Yes" : "No"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
 
-        {/* Support Information */}
-        <Card className="mt-8 bg-gradient-card shadow-medium">
-          <CardContent className="p-6 text-center">
-            <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
-            <p className="text-muted-foreground mb-4">
-              Our editorial team is here to assist you with the submission process.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button variant="outline">
-                Submission Guidelines
-              </Button>
-              <Button variant="outline">
-                Contact Support
-              </Button>
+    {/* Files Table */}
+    <Card className="shadow-soft">
+      <CardHeader><CardTitle>Uploaded Files</CardTitle></CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full border-collapse border border-border">
+            <thead>
+              <tr className="bg-muted-foreground/10">
+                <th className="border border-border px-4 py-2 text-left">Requirement</th>
+                <th className="border border-border px-4 py-2 text-left">File Name</th>
+                <th className="border border-border px-4 py-2 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requirements.map((req, i) => {
+                const uploadedFile = formData.files.find(f => f.requirement === req.title);
+                return (
+                  <tr key={i} className="hover:bg-muted-foreground/5">
+                    <td className="border border-border px-4 py-2">{req.title}</td>
+                    <td className="border border-border px-4 py-2">{uploadedFile?.fileName || "-"}</td>
+                    <td className="border border-border px-4 py-2">
+                      <Badge variant={uploadedFile ? "secondary" : "destructive"}>
+                        {uploadedFile ? "Uploaded" : "Pending"}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+   {/* Declarations */}
+<Card className="shadow-soft">
+  <CardHeader>
+    <CardTitle>Declarations</CardTitle>
+    <p className="text-sm text-muted-foreground mt-1">
+      Please confirm each declaration before submitting your manuscript.
+    </p>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted-foreground/5 transition">
+      <div>
+        <p className="font-medium">Ethics Approval</p>
+        <p className="text-sm text-muted-foreground">
+          I confirm that all research involving human or animal subjects has received ethics approval.
+        </p>
+      </div>
+      <Checkbox 
+        checked={formData.ethics} 
+        onCheckedChange={(v) => setFormData({ ...formData, ethics: v as boolean })} 
+      />
+    </div>
+
+    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted-foreground/5 transition">
+      <div>
+        <p className="font-medium">Conflict of Interest</p>
+        <p className="text-sm text-muted-foreground">
+          I declare that there are no conflicts of interest related to this manuscript.
+        </p>
+      </div>
+      <Checkbox 
+        checked={formData.conflicts} 
+        onCheckedChange={(v) => setFormData({ ...formData, conflicts: v as boolean })} 
+      />
+    </div>
+
+    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted-foreground/5 transition">
+      <div>
+        <p className="font-medium">Copyright Transfer</p>
+        <p className="text-sm text-muted-foreground">
+          I confirm that I have the right to transfer copyright to the publisher upon acceptance.
+        </p>
+      </div>
+      <Checkbox 
+        checked={formData.copyright} 
+        onCheckedChange={(v) => setFormData({ ...formData, copyright: v as boolean })} 
+      />
+    </div>
+  </CardContent>
+</Card>
+
+  </div>
+)}
+            {/* Navigation */}
+            <div className="flex justify-between pt-8">
+              <Button variant="outline" onClick={prevStep} disabled={currentStep===1}>Previous</Button>
+              {currentStep<4 
+                ? <Button onClick={nextStep}>Next</Button> 
+                : <Button onClick={handleSubmit} disabled={!formData.ethics || !formData.conflicts || !formData.copyright}><Send className="mr-2 h-4 w-4"/>Submit</Button>}
             </div>
           </CardContent>
         </Card>

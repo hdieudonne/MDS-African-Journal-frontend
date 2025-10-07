@@ -14,6 +14,9 @@ import Archive from "./pages/Archive";
 import Submission from "./pages/Submission";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Verify2FA from "./pages/Verify2FA";
+import Auth from "./pages/Login";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const queryClient = new QueryClient();
 
@@ -35,7 +38,9 @@ const App = () => (
               <Route path="/archive" element={<Archive />} />
               <Route path="/submission" element={<Submission />} />
               <Route path="/contact" element={<Contact />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/login" element={<Auth/>} />
+              <Route path="/verify-2fa" element={<Verify2FA />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

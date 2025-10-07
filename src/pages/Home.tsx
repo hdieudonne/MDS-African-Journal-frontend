@@ -84,6 +84,7 @@ const Home = () => {
               <BookOpen className="mr-2 h-5 w-5" />
               Browse Current Issue
             </Button> */}
+             <Link to='/submission'>
             <Button
               size="lg"
               variant="ghost"
@@ -92,6 +93,7 @@ const Home = () => {
               Submit Your Research
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            </Link>
           </div>
         </div>
       </section>
