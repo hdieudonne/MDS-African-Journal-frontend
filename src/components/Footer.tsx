@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
+    const currentYear = new Date().getFullYear();
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
@@ -10,7 +11,7 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <BookOpen className="h-6 w-6" />
-              <span className="font-heading font-bold text-xl">Research Journal</span>
+              <span className="font-heading font-bold text-xl">MDS African Journal</span>
             </div>
             <p className="text-primary-foreground/80 mb-4 max-w-md">
               Advancing scientific knowledge through peer-reviewed research and scholarly communication. 
@@ -38,11 +39,11 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-2 text-primary-foreground/80">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>0788888888</span>
               </li>
               <li className="flex items-center space-x-2 text-primary-foreground/80">
                 <MapPin className="h-4 w-4" />
-                <span>Academic Plaza, Research City</span>
+                <span>Kigali</span>
               </li>
             </ul>
           </div>
@@ -50,7 +51,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="text-primary-foreground/80">
-            © 2024 Research Journal. All rights reserved. | ISSN: 2024-5678
+            © {currentYear} MDS African Journal of Applied Economics and Development (MAJAED). All rights reserved.
           </p>
         </div>
       </div>

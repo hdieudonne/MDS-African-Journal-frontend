@@ -1,7 +1,7 @@
 // src/layouts/DashboardLayout.tsx
 import React, { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Menu, LogOut, X, Home, FileText, Users, Book, Award, BookOpen, Settings } from 'lucide-react';
+import { Menu, LogOut, X, Home, FileText, Users, Book, Award, BookOpen,Mail,BadgeInfo,Rss} from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,9 +21,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
     { name: 'Dashboard', path: '/dashboard', icon: <Home size={18} /> },
     { name: 'Submissions', path: '/dashboard/submissions', icon: <FileText size={18} /> },
     { name: 'Users', path: '/dashboard/users', icon: <Users size={18} /> },
-    { name: 'Articles', path: '/dashboard/articles', icon: <Book size={18} /> },
-    { name: 'Editorial Board', path: '/dashboard/editorial-board', icon: <Award size={18} /> },
+    { name: 'Editorial Board', path: '/dashboard/upload-member', icon: <Award size={18} /> },
     { name: 'Archive', path: '/dashboard/archive', icon: <BookOpen size={18} /> },
+     { name: 'FAQ', path: '/dashboard/add-faq', icon: <BookOpen size={18} /> },
+     { name: 'Messages', path: '/dashboard/contact-msg', icon: <Mail size={18} /> },
+      { name: 'About Content', path: '/dashboard/add-about', icon: <BadgeInfo size={18} /> },
+      { name: 'View Newslater', path: '/dashboard/view-newsletter', icon: <Rss size={18} /> },
+     
+  
    
   ];
 

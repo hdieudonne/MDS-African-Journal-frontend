@@ -53,6 +53,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       // Save token
       localStorage.setItem("access_token", res.token!);
       setMessage("✅ Login successful!");
+      navigate('/submission')
 
     } else {
       // Register flow
