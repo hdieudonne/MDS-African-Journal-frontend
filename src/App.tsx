@@ -30,6 +30,7 @@ import ContactMessages from "./pages/admin/ContactMessages";
 import EditorialMemberForm from "./pages/admin/UploadEditorialMember";
 import AboutSectionManager from "./pages/admin/AboutPageSectionUI";
 import NewsletterDashboard from "./pages/admin/NewsletterDashboard";
+import TopicDashboard from "./pages/admin/TopicDashboard";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const AppContent = () => {
              <Route path="contact-msg" element={<ContactMessages/>}  />
              <Route  path="add-about" element={<AboutSectionManager/>}  />
              <Route path="view-newsletter"  element={<NewsletterDashboard/>}   />
+             <Route  path="add-topic"  element={<TopicDashboard/>}   />
             
           </Route>
 

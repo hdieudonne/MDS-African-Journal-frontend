@@ -1,7 +1,7 @@
 // src/layouts/DashboardLayout.tsx
 import React, { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Menu, LogOut, X, Home, FileText, Users, Book, Award, BookOpen,Mail,BadgeInfo,Rss} from 'lucide-react';
+import { Menu, LogOut, X, Home, FileText, Users, Book, Award, BookOpen,Mail,BadgeInfo,Rss,Plus} from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -27,6 +27,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
      { name: 'Messages', path: '/dashboard/contact-msg', icon: <Mail size={18} /> },
       { name: 'About Content', path: '/dashboard/add-about', icon: <BadgeInfo size={18} /> },
       { name: 'View Newslater', path: '/dashboard/view-newsletter', icon: <Rss size={18} /> },
+      { name: 'Add Topic', path: '/dashboard/add-topic', icon: <Plus size={18} /> },
+
+  
+
+     
      
   
    

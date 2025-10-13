@@ -42,7 +42,7 @@ const AboutSectionManager: React.FC = () => {
   // Fetch sections safely
  const fetchSections = async () => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/about-section`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/about-sections`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -77,12 +77,12 @@ const AboutSectionManager: React.FC = () => {
 
     try {
       if (editingId) {
-        await axios.put(`${import.meta.env.VITE_API_URL}/about-section/${editingId}`, formData, {
+        await axios.put(`${import.meta.env.VITE_API_URL}/about-sections/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Section updated successfully!");
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/about-section`, formData, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/about-sections`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Section added successfully!");
@@ -113,7 +113,7 @@ const AboutSectionManager: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/about-section/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/about-sections/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Section deleted!");

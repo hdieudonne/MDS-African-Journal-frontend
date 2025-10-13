@@ -41,7 +41,7 @@ const About: React.FC = () => {
   const fetchSections = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/about-section`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/about-sections`);
       if (Array.isArray(res.data)) {
         const sorted = res.data.sort((a: AboutSectionData, b: AboutSectionData) => a.order - b.order);
         setSections(sorted);
