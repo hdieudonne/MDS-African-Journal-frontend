@@ -3,6 +3,7 @@ import axios from "axios";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, Eye, Award, Users, Globe, BookOpen } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AboutSectionData {
   id: string;
@@ -64,8 +65,6 @@ const About: React.FC = () => {
     fetchSections();
   }, []);
 
-  if (loading) return <p className="text-center py-12">Loading About sections...</p>;
-
   const missionValues = sections.filter((sec) => missionSections.includes(sec.section));
 
   return (
@@ -73,32 +72,52 @@ const About: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">{headerTitle}</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto whitespace-pre-line">
-            {headerContent}
-          </p>
+          {loading ? (
+            <>
+              <Skeleton className="h-10 w-3/4 mx-auto mb-4" />
+              <Skeleton className="h-6 w-1/2 mx-auto" />
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">{headerTitle}</h1>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto whitespace-pre-line">
+                {headerContent}
+              </p>
+            </>
+          )}
         </div>
 
         {/* Dynamic Sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          {sections
-            .filter((sec) => sec.section !== "HEADER" && !missionSections.includes(sec.section))
-            .map((sec) => {
-              const Icon = iconMap[sec.section] || Target;
-              return (
-                <Card key={sec.id} className="shadow-medium">
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i} className="shadow-medium">
                   <CardHeader>
-                    <CardTitle className="flex items-center font-heading">
-                      <Icon className="mr-3 h-6 w-6 text-primary" />
-                      {sec.title || sec.section.replace(/_/g, " ")}
-                    </CardTitle>
+                    <Skeleton className="h-6 w-2/3" />
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground leading-relaxed">{sec.content}</p>
+                    <Skeleton className="h-20 w-full" />
                   </CardContent>
                 </Card>
-              );
-            })}
+              ))
+            : sections
+                .filter((sec) => sec.section !== "HEADER" && !missionSections.includes(sec.section))
+                .map((sec) => {
+                  const Icon = iconMap[sec.section] || Target;
+                  return (
+                    <Card key={sec.id} className="shadow-medium">
+                      <CardHeader>
+                        <CardTitle className="flex items-center font-heading">
+                          <Icon className="mr-3 h-6 w-6 text-primary" />
+                          {sec.title || sec.section.replace(/_/g, " ")}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground leading-relaxed">{sec.content}</p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
         </div>
 
         {/* Mission Section */}
@@ -108,44 +127,58 @@ const About: React.FC = () => {
             Highlighting our contributions to economics and development in Africa
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {missionValues.map((value) => {
-              const Icon = iconMap[value.section] || Target;
-              return (
-                <Card
-                  key={value.id}
-                  className="text-center shadow-soft hover:shadow-medium transition-smooth"
-                >
-                  <CardHeader>
-                    <div className="flex justify-center mb-4">
-                      <Icon className="h-12 w-12 text-primary" />
-                    </div>
-                    <CardTitle className="font-heading">
-                      {value.title || value.section.replace(/_/g, " ")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{value.content}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {loading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i} className="text-center shadow-soft">
+                    <CardHeader>
+                      <Skeleton className="h-12 w-12 mx-auto mb-4 rounded-full" />
+                      <Skeleton className="h-6 w-2/3 mx-auto" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-20 w-full" />
+                    </CardContent>
+                  </Card>
+                ))
+              : missionValues.map((value) => {
+                  const Icon = iconMap[value.section] || Target;
+                  return (
+                    <Card
+                      key={value.id}
+                      className="text-center shadow-soft hover:shadow-medium transition-smooth"
+                    >
+                      <CardHeader>
+                        <div className="flex justify-center mb-4">
+                          <Icon className="h-12 w-12 text-primary" />
+                        </div>
+                        <CardTitle className="font-heading">
+                          {value.title || value.section.replace(/_/g, " ")}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground">{value.content}</p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
           </div>
         </section>
 
         {/* Call to Action */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold font-heading mb-4">Join Our Community</h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Be part of our mission to advance scientific knowledge and contribute to positive change in the world.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/submission">
-              <Button size="lg" className="font-semibold">
-                Submit Your Research
-              </Button>
-            </a>
+        {!loading && (
+          <div className="text-center">
+            <h2 className="text-3xl font-bold font-heading mb-4">Join Our Community</h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Be part of our mission to advance scientific knowledge and contribute to positive change in the world.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="/submission">
+                <Button size="lg" className="font-semibold">
+                  Submit Your Research
+                </Button>
+              </a>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

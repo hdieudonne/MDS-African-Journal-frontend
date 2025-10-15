@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +20,7 @@ import {
   Globe,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 interface Faq {
   id: string;
@@ -53,27 +49,59 @@ const Contact: React.FC = () => {
 
   const baseUrl = import.meta.env.VITE_API_URL;
 
-  const contactInfo = [
-    {
-      icon: Mail,
-      title: "Editorial Office",
-      details: ["editor@researchjournal.com", "submissions@researchjournal.com"],
-    },
-    {
-      icon: MapPin,
-      title: "Mailing Address",
-      details: [
-        "Research Journal Editorial Office",
-        "123 Academic Plaza, Suite 400",
-        "Research City, RC 12345",
-      ],
-    },
-    {
-      icon: Clock,
-      title: "Office Hours",
-      details: ["Mon-Fri: 9am - 5pm", "Sat: 10am - 2pm", "Sun: Closed"],
-    },
-  ];
+  interface SocialLinks {
+    twitter?: string;
+    facebook?: string;
+    linkedin?: string;
+    instagram?: string;
+  }
+
+  interface ContactInfo {
+    id: string;
+    intro: string;
+    editorEmail: string;
+    submissionsEmail: string;
+    email?: string;
+    phone?: string;
+    mailingAddress: string;
+    officeHours: string;
+    locationDescription: string;
+    social: SocialLinks;
+    updatedAt?: string;
+  }
+
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [loadingContactInfo, setLoadingContactInfo] = useState(false);
+
+  const fetchContactInfo = async () => {
+    setLoadingContactInfo(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/contact-info`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.status === "success" && res.data.data?.contactInfo) {
+        setContactInfo(res.data.data.contactInfo);
+      } else {
+        setContactInfo(null);
+      }
+    } catch (error) {
+      console.error("Failed to fetch contact info:", error);
+      setContactInfo(null);
+    } finally {
+      setLoadingContactInfo(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchContactInfo();
+  }, []);
 
   const inquiryTypes = [
     "General Information",
@@ -116,7 +144,14 @@ const Contact: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName || !lastName || !email || !inquiryType || !subject || !message) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !inquiryType ||
+      !subject ||
+      !message
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -160,7 +195,6 @@ const Contact: React.FC = () => {
     }
   };
 
-  // ✅ Newsletter subscribe function
   const handleNewsletterSubscribe = async () => {
     if (!newsletterEmail) {
       toast.error("Please enter your email");
@@ -321,27 +355,85 @@ const Contact: React.FC = () => {
             </Card>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info with Skeleton Loader */}
           <div className="space-y-6">
-            {contactInfo.map((info, idx) => (
-              <Card key={idx} className="shadow-medium">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <info.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">{info.title}</h3>
-                      {info.details.map((d, i) => (
-                        <p key={i} className="text-muted-foreground text-sm mb-1">
-                          {d}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {loadingContactInfo ? (
+              <>
+                <div className="p-6 border rounded-lg animate-pulse space-y-3">
+                  <div className="h-5 w-1/3 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
+                </div>
+                <div className="p-6 border rounded-lg animate-pulse space-y-3">
+                  <div className="h-5 w-1/3 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+                </div>
+                <div className="p-6 border rounded-lg animate-pulse space-y-3">
+                  <div className="h-5 w-1/3 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+                </div>
+              </>
+            ) : (
+              contactInfo && (
+                <>
+                  {/* Editorial Emails */}
+                  <Card className="shadow-medium">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Mail className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold mb-2">
+                            Editorial Office
+                          </h3>
+                          <p className="text-muted-foreground text-sm mb-1">
+                            {contactInfo.editorEmail}
+                          </p>
+                          <p className="text-muted-foreground text-sm mb-1">
+                            {contactInfo.submissionsEmail}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Mailing Address */}
+                  <Card className="shadow-medium">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <MapPin className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold mb-2">Mailing Address</h3>
+                          <p className="text-muted-foreground text-sm mb-1">
+                            {contactInfo.mailingAddress}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Office Hours */}
+                  <Card className="shadow-medium">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Clock className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold mb-2">Office Hours</h3>
+                          <p className="text-muted-foreground text-sm mb-1">
+                            {contactInfo.officeHours}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              )
+            )}
           </div>
         </div>
 
@@ -351,9 +443,22 @@ const Contact: React.FC = () => {
             Frequently Asked Questions
           </h2>
           {loadingFaqs ? (
-            <p className="text-center">Loading FAQs...</p>
+            <div className="max-w-4xl mx-auto space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="p-6 border rounded-lg animate-pulse space-y-3"
+                >
+                  <div className="h-5 w-2/3 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-full bg-gray-300 rounded"></div>
+                  <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
+                </div>
+              ))}
+            </div>
           ) : faqs.length === 0 ? (
-            <p className="text-center text-muted-foreground">No FAQs available.</p>
+            <p className="text-center text-muted-foreground">
+              No FAQs available.
+            </p>
           ) : (
             <>
               <div className="max-w-4xl mx-auto space-y-4">
@@ -404,9 +509,7 @@ const Contact: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-muted-foreground text-sm">
-                  Located in the heart of the academic district, our offices are
-                  easily accessible by public transportation and offer visitor
-                  parking.
+                  {contactInfo?.locationDescription}
                 </p>
               </CardContent>
             </Card>
@@ -425,15 +528,21 @@ const Contact: React.FC = () => {
                     through our social media channels.
                   </p>
                   <div className="flex gap-3">
-                    <Button variant="outline" size="sm">
-                      Twitter
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      LinkedIn
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      ResearchGate
-                    </Button>
+                    <a href={`${contactInfo?.social.twitter}`}>
+                      <Button variant="outline" size="sm">
+                        Twitter
+                      </Button>
+                    </a>
+                    <a href={`${contactInfo?.social.linkedin}`}>
+                      <Button variant="outline" size="sm">
+                        LinkedIn
+                      </Button>
+                    </a>
+                    <a href={`${contactInfo?.social.instagram}`}>
+                      <Button variant="outline" size="sm">
+                        Instagram
+                      </Button>
+                    </a>
                   </div>
                   <div className="pt-4 border-t border-border">
                     <h4 className="font-semibold mb-2">Newsletter</h4>

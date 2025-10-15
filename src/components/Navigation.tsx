@@ -3,10 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Menu, X, Mail, Phone, Search } from "lucide-react";
+import axios from "axios";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [contactInfo, setContactInfo] = useState<{ phone?: string; email?: string }>({});
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -21,26 +24,43 @@ const Navigation = () => {
     { name: "Contact", path: "/contact" },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path;
 
-  //Check login status when token changes or when navigating
+  // ✅ Fetch contact info from API
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/contact-info`);
+        if (res.data?.data?.contactInfo) {
+          setContactInfo({
+            phone: res.data.data.contactInfo.phone,
+            email: res.data.data.contactInfo.email,
+          });
+        }
+      } catch (error) {
+        console.error("❌ Failed to fetch contact info:", error);
+      }
+    };
+    fetchContactInfo();
+  }, []);
+
+  // ✅ Check login status on location change
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     setIsLoggedIn(!!token);
-  }, [location]); 
+  }, [location]);
 
-  //Also listen for token changes across tabs
+  // ✅ Listen for token changes across tabs
   useEffect(() => {
     const handleStorageChange = () => {
       const token = localStorage.getItem("access_token");
       setIsLoggedIn(!!token);
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  //Handle logout
+  // ✅ Handle logout
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     setIsLoggedIn(false);
@@ -53,13 +73,19 @@ const Navigation = () => {
       <div className="bg-primary text-primary-foreground text-xs md:text-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-1">
           <div className="flex items-center space-x-4">
-            <a href="tel:+250123456789" className="flex items-center space-x-1 hover:underline">
+            <a
+              href={`tel:${contactInfo.phone || "+250123456789"}`}
+              className="flex items-center space-x-1 hover:underline"
+            >
               <Phone className="h-3 w-3" />
-              <span>+250 123 456 789</span>
+              <span>{contactInfo.phone || "+250 123 456 789"}</span>
             </a>
-            <a href="mailto:info@majaed.org" className="flex items-center space-x-1 hover:underline">
+            <a
+              href={`mailto:${contactInfo.email || "info@majaed.org"}`}
+              className="flex items-center space-x-1 hover:underline"
+            >
               <Mail className="h-3 w-3" />
-              <span>info@majaed.org</span>
+              <span>{contactInfo.email || "info@majaed.org"}</span>
             </a>
           </div>
         </div>
@@ -87,7 +113,6 @@ const Navigation = () => {
               />
             </div>
 
-            {/* ✅ Conditional Login/Logout */}
             {isLoggedIn ? (
               <Button variant="default" onClick={handleLogout}>
                 Logout

@@ -23,7 +23,8 @@ const EditorialBoard: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -34,6 +35,7 @@ const EditorialBoard: React.FC = () => {
     bio: "",
     order: 1,
     isActive: true,
+    profileImage: "",
   });
 
   const token = localStorage.getItem("access_token");
@@ -67,8 +69,27 @@ const EditorialBoard: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setProfileImage(e.target.files[0]);
+      const file = e.target.files[0];
+      setImageFile(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
+  };
+
+  const uploadImageAndGetUrl = async () => {
+    if (!imageFile) return formData.profileImage; // no new image selected
+
+    // ⚠️ Example: if you have a separate upload endpoint
+    const uploadURL = `${import.meta.env.VITE_API_URL}/upload`;
+    const imgData = new FormData();
+    imgData.append("file", imageFile);
+
+    const res = await axios.post(uploadURL, imgData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data.url; // assuming your upload endpoint returns { url: "https://..." }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,24 +97,21 @@ const EditorialBoard: React.FC = () => {
     setLoading(true);
 
     try {
-      if (editingId) {
-        // UPDATE: use FormData if editing
-        const data = new FormData();
-        Object.entries(formData).forEach(([key, value]) => data.append(key, String(value)));
-        if (profileImage) {
-          data.append("profileImage", profileImage);
-        }
+      const imgUrl = await uploadImageAndGetUrl();
+      const payload = {
+        ...formData,
+        profileImage: imgUrl,
+      };
 
-        await axios.put(`${API_URL}/${editingId}`, data, {
+      if (editingId) {
+        await axios.put(`${API_URL}/${editingId}`, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         });
         toast.success("Member updated successfully!");
       } else {
-        // CREATE: send JSON only
-        const payload = { ...formData };
         await axios.post(API_URL, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -107,8 +125,7 @@ const EditorialBoard: React.FC = () => {
       fetchMembers();
     } catch (err: any) {
       console.error(err);
-      if (err.response?.data?.message) toast.error(err.response.data.message);
-      else toast.error("Failed to submit data");
+      toast.error("Failed to submit data");
     } finally {
       setLoading(false);
     }
@@ -123,7 +140,6 @@ const EditorialBoard: React.FC = () => {
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
     });
 
     if (result.isConfirmed) {
@@ -150,9 +166,11 @@ const EditorialBoard: React.FC = () => {
       bio: member.bio,
       order: member.order || 1,
       isActive: member.isActive,
+      profileImage: member.profileImage || "",
     });
     setEditingId(member.id);
-    setProfileImage(null);
+    setImageFile(null);
+    setPreviewImage(member.profileImage || null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -166,8 +184,10 @@ const EditorialBoard: React.FC = () => {
       bio: "",
       order: 1,
       isActive: true,
+      profileImage: "",
     });
-    setProfileImage(null);
+    setImageFile(null);
+    setPreviewImage(null);
     setEditingId(null);
   };
 
@@ -190,12 +210,17 @@ const EditorialBoard: React.FC = () => {
           <input type="text" name="affiliation" placeholder="Affiliation" value={formData.affiliation} onChange={handleChange} className="border rounded p-2" />
           <textarea name="bio" placeholder="Short Bio" value={formData.bio} onChange={handleChange} className="border rounded p-2 col-span-2" rows={3} />
 
-          {editingId && (
-            <div className="col-span-2">
-              <label className="block mb-1 font-medium">Profile Image</label>
-              <input type="file" onChange={handleFileChange} accept="image/*" />
-            </div>
-          )}
+          <div className="col-span-2">
+            <label className="block mb-1 font-medium">Profile Image</label>
+            <input type="file" onChange={handleFileChange} accept="image/*" />
+            {previewImage && (
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="mt-2 w-24 h-24 rounded-full object-cover border"
+              />
+            )}
+          </div>
 
           <div className="col-span-2 flex items-center gap-2">
             <input type="checkbox" checked={formData.isActive} onChange={handleCheckbox} />
@@ -208,7 +233,7 @@ const EditorialBoard: React.FC = () => {
         </form>
       </div>
 
-      {/* Members List */}
+      {/* Members Table */}
       <div className="bg-white p-6 rounded-xl shadow">
         <h2 className="text-xl font-semibold mb-4">Editorial Board Members</h2>
         {members.length === 0 ? (
@@ -230,7 +255,11 @@ const EditorialBoard: React.FC = () => {
                   <tr key={member.id} className="border-t">
                     <td className="p-2 flex items-center gap-2">
                       {member.profileImage && (
-                        <img src={member.profileImage} alt={member.fullName} className="w-8 h-8 rounded-full object-cover" />
+                        <img
+                          src={member.profileImage}
+                          alt={member.fullName}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
                       )}
                       {member.fullName}
                     </td>
@@ -238,8 +267,12 @@ const EditorialBoard: React.FC = () => {
                     <td className="p-2">{member.email}</td>
                     <td className="p-2">{member.isActive ? "Active" : "Inactive"}</td>
                     <td className="p-2 flex gap-2">
-                      <button onClick={() => handleEdit(member)} className="text-blue-600 hover:text-blue-800"><Pencil size={18} /></button>
-                      <button onClick={() => handleDelete(member.id)} className="text-red-600 hover:text-red-800"><Trash2 size={18} /></button>
+                      <button onClick={() => handleEdit(member)} className="text-blue-600 hover:text-blue-800">
+                        <Pencil size={18} />
+                      </button>
+                      <button onClick={() => handleDelete(member.id)} className="text-red-600 hover:text-red-800">
+                        <Trash2 size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -250,8 +283,15 @@ const EditorialBoard: React.FC = () => {
 
         {members.length > 3 && (
           <button onClick={() => setShowAll(prev => !prev)} className="mt-4 flex items-center gap-1 text-blue-600 hover:text-blue-800">
-            {showAll ? <>Show Less <ChevronUp size={18} /></> : <>Show More <ChevronDown size={18} /></>
-            }
+            {showAll ? (
+              <>
+                Show Less <ChevronUp size={18} />
+              </>
+            ) : (
+              <>
+                Show More <ChevronDown size={18} />
+              </>
+            )}
           </button>
         )}
       </div>

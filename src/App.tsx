@@ -18,7 +18,7 @@ import DashboardLayout from "./pages/admin/DashboardLayout";
 import DashboardHome from "./pages/admin/DashboardHome";
 import SubmissionsPage from "./pages/admin/SubmissionsPage";
 import UsersPage from "./pages/admin/UsersPage";
-import EditorialBoardPage from "./pages/admin/EditorialBoardPage";
+
 import ArchivePage from "./pages/admin/ArchivePage";
 import Verify2FA from "./pages/Verify2FA";
 import Auth from "./pages/Login";
@@ -31,6 +31,9 @@ import EditorialMemberForm from "./pages/admin/UploadEditorialMember";
 import AboutSectionManager from "./pages/admin/AboutPageSectionUI";
 import NewsletterDashboard from "./pages/admin/NewsletterDashboard";
 import TopicDashboard from "./pages/admin/TopicDashboard";
+import IssueManager from "./pages/admin/IssueManager";
+import AdminRoute from "./pages/admin/AdminRouteProtect";
+import ContactInfoManager from "./pages/admin/ContactInfoManager";
 
 const queryClient = new QueryClient();
 
@@ -45,11 +48,16 @@ const AppContent = () => {
       <main className="flex-1">
         <Routes>
           {/* Dashboard routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={
+            <AdminRoute>
+              <DashboardLayout />
+            </AdminRoute>
+            
+            }>
             <Route index element={<DashboardHome />} />
             <Route path="submissions" element={<SubmissionsPage />} />
             <Route path="users" element={<UsersPage />} />
-            <Route path="editorial-board" element={<EditorialBoardPage />} />
+
             <Route path="archive" element={<ArchivePage />} />
             <Route path="upload-member"  element={<EditorialMemberForm/>} />
              <Route path="add-faq" element={<FaqManager/>}   />
@@ -57,6 +65,8 @@ const AppContent = () => {
              <Route  path="add-about" element={<AboutSectionManager/>}  />
              <Route path="view-newsletter"  element={<NewsletterDashboard/>}   />
              <Route  path="add-topic"  element={<TopicDashboard/>}   />
+             <Route path="issues" element={<IssueManager/>}  />
+             <Route  path="contact-info" element={<ContactInfoManager/>} />
             
           </Route>
 
