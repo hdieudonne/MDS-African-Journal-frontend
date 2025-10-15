@@ -213,7 +213,7 @@ const NewsletterDashboard: React.FC = () => {
               <th className="p-3 border-b">#</th>
               <th className="p-3 border-b">Title</th>
               <th className="p-3 border-b">Date</th>
-              <th className="p-3 border-b">Actions</th>
+              {/* <th className="p-3 border-b">Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -231,7 +231,7 @@ const NewsletterDashboard: React.FC = () => {
                   <td className="p-3 border-b">
                     {new Date(n.createdAt).toLocaleString()}
                   </td>
-                  <td className="p-3 border-b space-x-2">
+                  {/* <td className="p-3 border-b space-x-2">
                     <button
                       onClick={() => handleEdit(n)}
                       className="p-2 rounded bg-yellow-500 text-white hover:bg-yellow-600"
@@ -244,7 +244,7 @@ const NewsletterDashboard: React.FC = () => {
                     >
                       <Trash2 size={16} />
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             )}
