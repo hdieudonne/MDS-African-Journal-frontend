@@ -2,18 +2,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  FileText, 
-  CheckCircle, 
-  Clock, 
-  Users, 
-  Download, 
-  AlertCircle, 
+import {
+  FileText,
+  CheckCircle,
+  Clock,
+  Users,
+  Download,
+  AlertCircle,
   BookOpen,
   MessageSquare,
   Award,
-  Target
+  Target,
 } from "lucide-react";
+import React from "react";
 
 const AuthorPage = () => {
   const submissionSteps = [
@@ -21,51 +22,52 @@ const AuthorPage = () => {
       step: 1,
       title: "Prepare Manuscript",
       description: "Format your manuscript according to our guidelines",
-      icon: FileText
+      icon: FileText,
     },
     {
       step: 2,
       title: "Online Submission",
       description: "Submit through our online portal with required documents",
-      icon: Upload
+      icon: Upload,
     },
     {
       step: 3,
       title: "Initial Review",
       description: "Editorial team conducts initial quality assessment",
-      icon: CheckCircle
+      icon: CheckCircle,
     },
     {
       step: 4,
       title: "Peer Review",
       description: "Expert reviewers evaluate your research",
-      icon: Users
+      icon: Users,
     },
     {
       step: 5,
       title: "Decision & Revision",
       description: "Receive feedback and revise if required",
-      icon: MessageSquare
+      icon: MessageSquare,
     },
     {
       step: 6,
       title: "Publication",
       description: "Final acceptance and publication process",
-      icon: Award
-    }
+      icon: Award,
+    },
   ];
 
   const articleTypes = [
     {
       type: "Plagiarism Policy",
-      description: "MDS-JAED enforces a strict plagiarism threshold of 15%. All manuscripts will be screened using Turnitin or equivalent software. Manuscripts with high similarity scores will be automatically rejected or returned for revision.",
-      items: []
+      description:
+        "MDS-JAED enforces a strict plagiarism threshold of 15%. All manuscripts will be screened using Turnitin or equivalent software. Manuscripts with high similarity scores will be automatically rejected or returned for revision.",
+      items: [],
     },
-     {
+    {
       type: "Author Fees",
-      description: "Currently, there are no submission or publication fees.This policy may be revised in the future to cover editorial and hosting costs.",
-      items: [
-      ]
+      description:
+        "Currently, there are no submission or publication fees.This policy may be revised in the future to cover editorial and hosting costs.",
+      items: [],
     },
     {
       type: "Types of Submissions",
@@ -74,17 +76,14 @@ const AuthorPage = () => {
         "Original Research Article 4,000–8,000 words Full-length analytical papers",
         "Policy Brief 2,000–4,000 words: Short, actionable findings for decision-makers ",
         "Field/Case Reports 3,000–6,000 wordsField research, project evaluations",
-        "Book Reviews 1,000–2,500 words: Reviews of recent academic publications"
+        "Book Reviews 1,000–2,500 words: Reviews of recent academic publications",
       ],
-      description2:"Accepted articles may be published online ahead of print."
+      description2: "Accepted articles may be published online ahead of print.",
     },
-      {
+    {
       type: "Publication Schedule",
       description: "MDS-JAED is published biannually:",
-      items: [
-        "Volume 1, Issue 1: July–December",
-        "Volume 1, Issue 2: January–June",
-      ]
+      items: ["Volume 1, Issue 1: July–December", "Volume 1, Issue 2: January–June"],
     },
     {
       type: "Acceptable Topics",
@@ -99,24 +98,22 @@ const AuthorPage = () => {
         "Entrepreneurship and Innovation in Africa",
         "Economic Policy Analysis and Evaluation",
         "Environmental and Energy Economics",
-        "Quantitative Modeling in Economics"
-      ]
+        "Quantitative Modeling in Economics",
+      ],
     },
     {
       type: "Formatting Guidelines",
       description: "Comprehensive Formatting Guidelines",
-     items: [
+      items: [
         "Language: English (British or American, but consistent throughout)",
         "Citation Style: APA 7th Edition",
         "File Format: Submit both Word (.docx) and PDF (.pdf)",
         "Font: Times New Roman, 12 pt, 1.5 spacing",
         "Margins: Normal (1 inch)",
         "Page Numbers: Bottom right",
-        "Tables and Figures: Embedded in the text with proper labels and sources"
-
-      ]
+        "Tables and Figures: Embedded in the text with proper labels and sources",
+      ],
     },
-   
   ];
 
   const guidelines = [
@@ -127,18 +124,18 @@ const AuthorPage = () => {
         "Abstract (250-300 words) with keywords",
         "Introduction, Methods, Results, Discussion structure",
         "References in APA format (maximum 50 for research articles)",
-        "Figures and tables with appropriate captions"
-      ]
+        "Figures and tables with appropriate captions",
+      ],
     },
     {
-      category: "Requirements documents", 
+      category: "Requirements documents",
       items: [
         "Double-spaced text with 12pt Times New Roman font",
         "Line numbers and page numbers included",
         "High-resolution figures (minimum 300 DPI)",
         "Supplementary materials in separate files",
-        "Manuscript file in .docx or .pdf format"
-      ]
+        "Manuscript file in .docx or .pdf format",
+      ],
     },
     {
       category: "Ethical Standards",
@@ -147,9 +144,9 @@ const AuthorPage = () => {
         "Informed consent documentation",
         "Declaration of competing interests",
         "Data availability statement",
-        "Acknowledgment of funding sources"
-      ]
-    }
+        "Acknowledgment of funding sources",
+      ],
+    },
   ];
 
   return (
@@ -157,10 +154,13 @@ const AuthorPage = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">Author Guidelines</h1>
+          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6">
+            Author Guidelines
+          </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Comprehensive guidelines for authors to prepare and submit high-quality manuscripts 
-            that meet our rigorous standards for scientific excellence.
+            Comprehensive guidelines for authors to prepare and submit
+            high-quality manuscripts that meet our rigorous standards for
+            scientific excellence.
           </p>
         </div>
 
@@ -174,9 +174,10 @@ const AuthorPage = () => {
 
           {/* Guidelines Tab */}
           <TabsContent value="guidelines" className="space-y-8">
-            {/* Article Types */}
             <section>
-              <h2 className="text-3xl font-bold font-heading mb-6">Detailed Guidelines</h2>
+              <h2 className="text-3xl font-bold font-heading mb-6">
+                Detailed Guidelines
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {articleTypes.map((type, index) => (
                   <Card key={index} className="shadow-medium">
@@ -193,13 +194,15 @@ const AuthorPage = () => {
                           </li>
                         ))}
                       </ul>
+                      {type.description2 && (
+                        <p className="text-muted-foreground mt-4">{type.description2}</p>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
               </div>
             </section>
 
-            {/* Detailed Guidelines */}
             <section>
               <h2 className="text-3xl font-bold font-heading mb-6">Other Guidelines</h2>
               <div className="space-y-6">
@@ -273,7 +276,6 @@ const AuthorPage = () => {
           <TabsContent value="review" className="space-y-8">
             <section>
               <h2 className="text-3xl font-bold font-heading mb-6">Peer Review Process</h2>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card className="shadow-medium">
                   <CardHeader>
@@ -284,8 +286,7 @@ const AuthorPage = () => {
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground mb-4">
-                      We employ a rigorous double-blind peer review process where both 
-                      reviewers and authors remain anonymous to ensure unbiased evaluation.
+                      We employ a rigorous double-blind peer review process where both reviewers and authors remain anonymous to ensure unbiased evaluation.
                     </p>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-center gap-2">
@@ -368,7 +369,6 @@ const AuthorPage = () => {
           <TabsContent value="resources" className="space-y-8">
             <section>
               <h2 className="text-3xl font-bold font-heading mb-6">Author Resources</h2>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="shadow-medium hover:shadow-strong transition-smooth">
                   <CardHeader>
@@ -381,7 +381,9 @@ const AuthorPage = () => {
                     <p className="text-muted-foreground mb-4">
                       Download manuscript templates and formatting guides
                     </p>
-                    <Button variant="outline" size="sm">Download</Button>
+                    <Button variant="outline" size="sm">
+                      Download
+                    </Button>
                   </CardContent>
                 </Card>
 
@@ -396,7 +398,9 @@ const AuthorPage = () => {
                     <p className="text-muted-foreground mb-4">
                       Pre-submission checklists and quality guidelines
                     </p>
-                    <Button variant="outline" size="sm">View</Button>
+                    <Button variant="outline" size="sm">
+                      View
+                    </Button>
                   </CardContent>
                 </Card>
 
@@ -411,7 +415,9 @@ const AuthorPage = () => {
                     <p className="text-muted-foreground mb-4">
                       Get help with submission and review process
                     </p>
-                    <Button variant="outline" size="sm">Contact</Button>
+                    <Button variant="outline" size="sm">
+                      Contact
+                    </Button>
                   </CardContent>
                 </Card>
               </div>
@@ -426,8 +432,7 @@ const AuthorPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  All submissions must comply with ethical standards for research involving human subjects, 
-                  animals, or environmental studies. Ensure you have appropriate ethics approvals before submission.
+                  All submissions must comply with ethical standards for research involving human subjects, animals, or environmental studies. Ensure you have appropriate ethics approvals before submission.
                 </p>
               </CardContent>
             </Card>
@@ -438,10 +443,14 @@ const AuthorPage = () => {
   );
 };
 
-// Missing Upload icon, adding a placeholder
 const Upload = ({ className }: { className?: string }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+    />
   </svg>
 );
 

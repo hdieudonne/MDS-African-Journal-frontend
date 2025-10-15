@@ -1,12 +1,15 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Menu, X, Mail, Phone, Search } from "lucide-react";
+import {toast} from "react-toastify"
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -19,7 +22,32 @@ const Navigation = () => {
     { name: "Contact", path: "/contact" },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
+
+  //Check login status when token changes or when navigating
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    setIsLoggedIn(!!token);
+  }, [location]); 
+
+  //Also listen for token changes across tabs
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const token = localStorage.getItem("access_token");
+      setIsLoggedIn(!!token);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  //Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    setIsLoggedIn(false);
+    toast.success("logout successfully")
+    navigate("/login");
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-soft">
@@ -39,10 +67,9 @@ const Navigation = () => {
         </div>
       </div>
 
-      {/* 🔹 Middle Bar (Logo + Search + Login) */}
+      {/* 🔹 Middle Bar */}
       <div className="container mx-auto px-4 py-3 border-b border-border">
         <div className="flex items-center justify-between">
-          {/* Logo + Title */}
           <Link to="/" className="flex items-center space-x-2 font-bold text-xl text-primary">
             <div className="h-24 w-24">
               <img src="/logo.png" alt="Logo" className="rounded-full object-cover" />
@@ -52,7 +79,6 @@ const Navigation = () => {
             </span>
           </Link>
 
-          {/* Search + Login */}
           <div className="hidden md:flex items-center space-x-3">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -62,18 +88,25 @@ const Navigation = () => {
                 className="pl-8 w-48 md:w-64"
               />
             </div>
-             <Link to="/login">
-             <Button variant="default">Login</Button>
-             </Link>
+
+            {/* ✅ Conditional Login/Logout */}
+            {isLoggedIn ? (
+              <Button variant="default" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : (
+              <Link to="/login">
+                <Button variant="default">Login</Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
-      {/* 🔹 Bottom Nav (Nav Items) */}
+      {/* 🔹 Bottom Nav */}
       <div className="bg-background">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-12">
-            {/* Desktop Nav */}
             <div className="hidden lg:flex items-center space-x-1">
               {navItems.map((item) => (
                 <Link
@@ -90,7 +123,6 @@ const Navigation = () => {
               ))}
             </div>
 
-            {/* Mobile Menu Button */}
             <Button
               variant="ghost"
               size="icon"
@@ -101,7 +133,6 @@ const Navigation = () => {
             </Button>
           </div>
 
-          {/* Mobile Nav Dropdown */}
           {isMenuOpen && (
             <div className="lg:hidden py-4 border-t border-border">
               <div className="flex flex-col space-y-2">
@@ -120,12 +151,21 @@ const Navigation = () => {
                   </Link>
                 ))}
 
-                {/* Mobile Search + Login */}
                 <div className="mt-4 space-y-2">
                   <Input type="text" placeholder="Search..." />
-                   <Link to="/login">
-                  <Button className="w-full">Login</Button>
-                  </Link>
+                  {isLoggedIn ? (
+                    <Button
+                      className="w-full"
+                      variant="destructive"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  ) : (
+                    <Link to="/login">
+                      <Button className="w-full">Login</Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

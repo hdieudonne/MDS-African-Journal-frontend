@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
 
   return (
     <aside
-      className={`bg-blue-900 text-white w-64 h-screen flex flex-col justify-between fixed top-0 p-6 transition-transform duration-300 z-40 ${
+      className={`bg-primary text-white w-64 h-screen flex flex-col justify-between fixed top-0 p-6 transition-transform duration-300 z-40 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0`}
     >
@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
             <button
               key={m.name}
               onClick={() => navigate(m.path)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-blue-800"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-blue-900"
             >
               {m.icon}
               <span className="font-medium">{m.name}</span>

@@ -1,7 +1,5 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
@@ -25,9 +23,7 @@ import Verify2FA from "./pages/Verify2FA";
 import Auth from "./pages/Login";
 import VerifyEmail from "./pages/VerifyEmail";
 
-const queryClient = new QueryClient();
-
-const AppContent = () => {
+const App = () => {
   const location = useLocation();
   const hideLayout = location.pathname.includes("dashboard");
 
@@ -66,20 +62,22 @@ const AppContent = () => {
       </main>
 
       {!hideLayout && <Footer />}
+     <ToastContainer
+     position="top-right"
+     autoClose={2000}
+     hideProgressBar={false} // show progress bar
+     closeOnClick
+     pauseOnHover
+     draggable
+     theme="light"
+     toastStyle={{
+     background: "#fff",
+     border: "1px solid #d1d5db",
+    }}
+     />
+
     </div>
   );
 };
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
 
 export default App;

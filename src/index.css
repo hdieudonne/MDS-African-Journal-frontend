@@ -139,3 +139,19 @@ All colors MUST be HSL for proper theming.
     @apply bg-background text-foreground;
   }
 }
+/* Default toastify progress bar color */
+.Toastify__progress-bar {
+  background: #22c55e !important; /* green */
+}
+
+/* Error toast progress bar */
+.Toastify__toast--error .Toastify__progress-bar {
+  background: #ef4444 !important; /* red */
+}
+
+/* Success toast progress bar */
+.Toastify__toast--success .Toastify__progress-bar {
+  background: #22c55e !important; /* green */
+}
+
+

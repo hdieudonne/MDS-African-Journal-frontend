@@ -8,6 +8,7 @@ import { Loader2, LogIn, Mail, Lock, User, UserPlus } from "lucide-react";
 import { loginUser, registerUser } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
+import {toast} from 'react-toastify'
 
 const Auth = () => {
   const [tab, setTab] = useState("login");
@@ -52,17 +53,22 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       // Save token
       localStorage.setItem("access_token", res.token!);
-      setMessage("✅ Login successful!");
+      toast.success("Login successful!");
+      navigate("/submission")
 
     } else {
       // Register flow
-      await registerUser(registerForm);
-      setMessage("✅ Registration successful! Check your email for the code.");
+      const res:any  = await registerUser(registerForm);
+      if (res.error && res.error === "EMAIL_EXISTS") {
+      toast.error("❌ Email already exists. Please login or use another email.");
+      return;
+       }
+      toast.success("✅ Registration successful! Check your email for the code.");
       navigate("/verify-email", { state: { email: registerForm.email } });
-    }
+       }
 
   } catch (err: any) {
-    setMessage(err.response?.data?.message || "❌ Something went wrong!");
+    toast.error('Invalid Email or Password')
   } finally {
     setLoading(false);
   }
