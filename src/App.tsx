@@ -16,12 +16,20 @@ import DashboardLayout from "./pages/admin/DashboardLayout";
 import DashboardHome from "./pages/admin/DashboardHome";
 import SubmissionsPage from "./pages/admin/SubmissionsPage";
 import UsersPage from "./pages/admin/UsersPage";
-import ArticlesPage from "./pages/admin/ArticlesPage";
-import EditorialBoardPage from "./pages/admin/EditorialBoardPage";
+
 import ArchivePage from "./pages/admin/ArchivePage";
 import Verify2FA from "./pages/Verify2FA";
 import Auth from "./pages/Login";
 import VerifyEmail from "./pages/VerifyEmail";
+import FaqManager from "./pages/admin/FaqForm";
+import ContactMessages from "./pages/admin/ContactMessages";
+import EditorialMemberForm from "./pages/admin/UploadEditorialMember";
+import AboutSectionManager from "./pages/admin/AboutPageSectionUI";
+import NewsletterDashboard from "./pages/admin/NewsletterDashboard";
+import TopicDashboard from "./pages/admin/TopicDashboard";
+import IssueManager from "./pages/admin/IssueManager";
+import AdminRoute from "./pages/admin/AdminRouteProtect";
+import ContactInfoManager from "./pages/admin/ContactInfoManager";
 
 const App = () => {
   const location = useLocation();
@@ -34,16 +42,30 @@ const App = () => {
       <main className="flex-1">
         <Routes>
           {/* Dashboard routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={
+            <AdminRoute>
+              <DashboardLayout />
+            </AdminRoute>
+            
+            }>
             <Route index element={<DashboardHome />} />
             <Route path="submissions" element={<SubmissionsPage />} />
             <Route path="users" element={<UsersPage />} />
-            <Route path="articles" element={<ArticlesPage />} />
-            <Route path="editorial-board" element={<EditorialBoardPage />} />
+
             <Route path="archive" element={<ArchivePage />} />
+            <Route path="upload-member"  element={<EditorialMemberForm/>} />
+             <Route path="add-faq" element={<FaqManager/>}   />
+             <Route path="contact-msg" element={<ContactMessages/>}  />
+             <Route  path="add-about" element={<AboutSectionManager/>}  />
+             <Route path="view-newsletter"  element={<NewsletterDashboard/>}   />
+             <Route  path="add-topic"  element={<TopicDashboard/>}   />
+             <Route path="issues" element={<IssueManager/>}  />
+             <Route  path="contact-info" element={<ContactInfoManager/>} />
+            
           </Route>
 
           {/* Public routes */}
+         
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/journal" element={<Journal />} />
@@ -79,5 +101,4 @@ const App = () => {
     </div>
   );
 };
-
 export default App;

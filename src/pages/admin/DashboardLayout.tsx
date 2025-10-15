@@ -1,7 +1,22 @@
 // src/layouts/DashboardLayout.tsx
-import React, { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { Menu, LogOut, X, Home, FileText, Users, Book, Award, BookOpen, Settings } from 'lucide-react';
+import React, { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  Menu,
+  LogOut,
+  X,
+  Home,
+  FileText,
+  Users,
+  Book,
+  Award,
+  BookOpen,
+  Mail,
+  BadgeInfo,
+  Rss,
+  Plus,
+} from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -11,26 +26,86 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
   const navigate = useNavigate();
 
-  const handleLogOut = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+ const handleLogOut = async () => {
+  try {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      console.warn("No token found");
+      navigate("/login");
+      return;
+    }
+
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/auth/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    localStorage.removeItem("access_token");
+    navigate("/login");
+  } catch (error) {
+    console.error("Logout failed:", error);
+    localStorage.removeItem("access_token");
+    navigate("/login");
+  }
+};
+
 
   const menus = [
-    { name: 'Dashboard', path: '/dashboard', icon: <Home size={18} /> },
-    { name: 'Submissions', path: '/dashboard/submissions', icon: <FileText size={18} /> },
-    { name: 'Users', path: '/dashboard/users', icon: <Users size={18} /> },
-    { name: 'Articles', path: '/dashboard/articles', icon: <Book size={18} /> },
-    { name: 'Editorial Board', path: '/dashboard/editorial-board', icon: <Award size={18} /> },
-    { name: 'Archive', path: '/dashboard/archive', icon: <BookOpen size={18} /> },
-   
+    { name: "Dashboard", path: "/dashboard", icon: <Home size={18} /> },
+    {
+      name: "Submissions",
+      path: "/dashboard/submissions",
+      icon: <FileText size={18} />,
+    },
+    { name: "Users", path: "/dashboard/users", icon: <Users size={18} /> },
+    {
+      name: "Editorial Board",
+      path: "/dashboard/upload-member",
+      icon: <Award size={18} />,
+    },
+    {
+      name: "Archive",
+      path: "/dashboard/issues",
+      icon: <BookOpen size={18} />,
+    },
+    { name: "FAQ", path: "/dashboard/add-faq", icon: <BookOpen size={18} /> },
+    {
+      name: "Messages",
+      path: "/dashboard/contact-msg",
+      icon: <Mail size={18} />,
+    },
+    {
+      name: "About Content",
+      path: "/dashboard/add-about",
+      icon: <BadgeInfo size={18} />,
+    },
+    {
+      name: "View Newslater",
+      path: "/dashboard/view-newsletter",
+      icon: <Rss size={18} />,
+    },
+    {
+      name: "Add Topic",
+      path: "/dashboard/add-topic",
+      icon: <Plus size={18} />,
+    },
+    {
+      name: "Contact Info",
+      path: "/dashboard/contact-info",
+      icon: <Plus size={18} />,
+    },
   ];
 
   return (
     <aside
-      className={`bg-primary text-white w-64 h-screen flex flex-col justify-between fixed top-0 p-6 transition-transform duration-300 z-40 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
+      className={`bg-blue-900 text-white w-64 h-screen flex flex-col justify-between fixed top-0 p-6 transition-transform duration-300 z-40 ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0`}
     >
       <div>
@@ -75,9 +150,9 @@ const DashboardLayout: React.FC = () => {
         <div className="md:hidden mb-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+            className="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2"
           >
-            <Menu size={20} /> Menu
+            <Menu size={20} />
           </button>
         </div>
 
